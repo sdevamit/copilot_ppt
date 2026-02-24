@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Prompt Engineering Principles</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            /* GitHub Dark Dim */
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Grid Background Pattern */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V30H30V1H1Z' fill='%2330363d' fill-opacity='0.2'/%3E%3C/svg%3E");
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* Glow effects */
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        .glow-green {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(59, 165, 93, 0.08);
+            top: -100px;
+            right: -100px;
+        }
+
+        .glow-blue {
+            width: 300px;
+            height: 300px;
+            background-color: rgba(88, 166, 255, 0.08);
+            bottom: -50px;
+            left: -50px;
+        }
+
+        /* Card Styles */
+        .feature-card {
+            background-color: rgba(22, 27, 34, 0.8);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            /* Slightly smaller radius for denser layout */
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .feature-card:hover {
+            border-color: #3fb950;
+            transform: translateX(8px);
+            background-color: rgba(22, 27, 34, 0.95);
+        }
+
+        .icon-box {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background-color: #1f2428;
+            border: 1px solid #30363d;
+        }
+
+        /* Code Window Styling */
+        .code-window {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+
+        .window-header {
+            background-color: #161b22;
+            padding: 10px 16px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 6px;
+            margin-right: 12px;
+        }
+
+        .control {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .close {
+            background-color: #ff5f56;
+        }
+
+        .minimize {
+            background-color: #ffbd2e;
+        }
+
+        .maximize {
+            background-color: #27c93f;
+        }
+
+        .line-number {
+            color: #484f58;
+            margin-right: 16px;
+            user-select: none;
+        }
+
+        .code-content {
+            padding: 16px;
+            line-height: 1.6;
+        }
+
+        .syntax-comment {
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        .syntax-keyword {
+            color: #ff7b72;
+        }
+
+        .syntax-string {
+            color: #a5d6ff;
+        }
+
+        .syntax-tag {
+            color: #7ee787;
+        }
+
+        /* Highlight boxes in code */
+        .highlight-box {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .tag-context {
+            background-color: rgba(88, 166, 255, 0.2);
+            color: #58a6ff;
+            border: 1px solid rgba(88, 166, 255, 0.4);
+        }
+
+        .tag-srp {
+            background-color: rgba(248, 81, 73, 0.2);
+            color: #ff7b72;
+            border: 1px solid rgba(248, 81, 73, 0.4);
+        }
+
+        .tag-constraints {
+            background-color: rgba(210, 153, 34, 0.2);
+            color: #d29922;
+            border: 1px solid rgba(210, 153, 34, 0.4);
+        }
+
+        .tag-criteria {
+            background-color: rgba(63, 185, 80, 0.2);
+            color: #3fb950;
+            border: 1px solid rgba(63, 185, 80, 0.4);
+        }
+
+        /* Layout Utilities */
+        .content-area {
+            z-index: 10;
+            display: flex;
+            height: 100%;
+            padding: 48px 64px;
+            /* Reduced top padding slightly */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Background -->
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-green"></div>
+        <div class="glow-spot glow-blue"></div>
+        <!-- Main Content -->
+        <div class="content-area">
+            <!-- Left Column: Content -->
+            <div class="w-7/12 flex flex-col justify-center pr-12">
+                <!-- Header -->
+                <div class="mb-8">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <i class="fas fa-terminal text-2xl text-green-400"></i>
+                        <span
+                            class="text-gray-400 text-base font-medium tracking-wide mono-font">section.prompt_engineering</span>
+                    </div>
+                    <h1 class="text-4xl font-bold text-white mb-2 tracking-tight">Prompt Principles</h1>
+                    <h2 class="text-xl text-green-400 font-light mono-font">&lt;Best_Practices_for_Developers /&gt;</h2>
+                </div>
+                <!-- Bullet Points (5 Cards) -->
+                <div class="space-y-3">
+                    <!-- Point 1: Context -->
+                    <div class="feature-card p-3 flex items-start space-x-4">
+                        <div class="icon-box shrink-0 text-blue-400">
+                            <i class="fas fa-folder-open text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-white mb-0.5">Context is King</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed">
+                                Copilot reads your open tabs. Keep relevant files open (interfaces, utils) to ground the
+                                AI in your codebase's reality.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 2: SRP -->
+                    <div class="feature-card p-3 flex items-start space-x-4">
+                        <div class="icon-box shrink-0 text-red-400">
+                            <i class="fas fa-bullseye text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-white mb-0.5">Single Responsibility</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed">
+                                One prompt, one goal. Ask for specific outcomes (e.g., "generate interface") rather than
+                                broad tasks to avoid hallucinations.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 3: Constraints -->
+                    <div class="feature-card p-3 flex items-start space-x-4">
+                        <div class="icon-box shrink-0 text-yellow-400">
+                            <i class="fas fa-ruler-combined text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-white mb-0.5">Explicit Constraints</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed">
+                                Define the boundaries: "Use functional style", "No external libraries", "O(n)
+                                complexity", or "Follow Google Style Guide".
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 4: Acceptance Criteria -->
+                    <div class="feature-card p-3 flex items-start space-x-4">
+                        <div class="icon-box shrink-0 text-green-400">
+                            <i class="fas fa-clipboard-check text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-white mb-0.5">Acceptance Criteria</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed">
+                                Tell Copilot how you will verify success: "Include unit tests for edge cases", "Generate
+                                DocBlock comments".
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 5: Iteration -->
+                    <div class="feature-card p-3 flex items-start space-x-4">
+                        <div class="icon-box shrink-0 text-purple-400">
+                            <i class="fas fa-sync-alt text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-white mb-0.5">Iterative Refinement</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed">
+                                Treat the first output as a draft. Review, then refine: "Now optimize for memory" or
+                                "Handle the null case".
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column: Visual Metaphor -->
+            <div class="w-5/12 flex flex-col justify-center items-center relative pl-4">
+                <!-- Anatomy of a Prompt Visual -->
+                <div class="w-full max-w-md">
+                    <div class="text-center mb-4">
+                        <span class="text-gray-400 text-sm font-medium tracking-widest uppercase">Anatomy of a Perfect
+                            Prompt</span>
+                    </div>
+                    <div class="code-window">
+                        <div class="window-header">
+                            <div class="window-controls">
+                                <div class="control close"></div>
+                                <div class="control minimize"></div>
+                                <div class="control maximize"></div>
+                            </div>
+                            <span class="text-gray-400 text-xs ml-2">Copilot Chat</span>
+                        </div>
+                        <div class="code-content">
+                            <!-- Context Section -->
+                            <div class="mb-3 pl-2 border-l-2 border-blue-500 bg-opacity-10 bg-blue-900 rounded-r">
+                                <span class="highlight-box tag-context">1. Context</span>
+                                <div class="flex"><span class="line-number">01</span><span class="syntax-comment">//
+                                        Reference: @workspace /src/types/User.ts</span></div>
+                                <div class="flex"><span class="line-number">02</span><span class="syntax-comment">//
+                                        Focus: active selection in user_api.ts</span></div>
+                            </div>
+                            <!-- SRP/Goal Section -->
+                            <div class="mb-3 pl-2 border-l-2 border-red-500 bg-opacity-10 bg-red-900 rounded-r">
+                                <span class="highlight-box tag-srp">2. Goal</span>
+                                <div class="flex"><span class="line-number">03</span>
+                                    <p class="m-0 text-white">Create a validation function for new user registration.
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Constraints Section -->
+                            <div class="mb-3 pl-2 border-l-2 border-yellow-500 bg-opacity-10 bg-yellow-900 rounded-r">
+                                <span class="highlight-box tag-constraints">3. Constraints</span>
+                                <div class="flex"><span class="line-number">04</span>
+                                    <p class="m-0 text-white">- Use <span class="syntax-keyword">Zod</span> library for
+                                        schema.</p>
+                                </div>
+                                <div class="flex"><span class="line-number">05</span>
+                                    <p class="m-0 text-white">- Password must have 1 special char.</p>
+                                </div>
+                                <div class="flex"><span class="line-number">06</span>
+                                    <p class="m-0 text-white">- No regex for email validation.</p>
+                                </div>
+                            </div>
+                            <!-- Criteria Section -->
+                            <div class="mb-1 pl-2 border-l-2 border-green-500 bg-opacity-10 bg-green-900 rounded-r">
+                                <span class="highlight-box tag-criteria">4. Criteria</span>
+                                <div class="flex"><span class="line-number">07</span>
+                                    <p class="m-0 text-white">Provide 3 unit tests covering:</p>
+                                </div>
+                                <div class="flex"><span class="line-number">08</span>
+                                    <p class="m-0 text-white"> - Valid input</p>
+                                </div>
+                                <div class="flex"><span class="line-number">09</span>
+                                    <p class="m-0 text-white"> - Weak password</p>
+                                </div>
+                                <div class="flex"><span class="line-number">10</span>
+                                    <p class="m-0 text-white"> - Invalid email format</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Connecting Lines / Arrow -->
+                    <div class="mt-6 flex justify-center">
+                        <div class="flex flex-col items-center">
+                            <div class="h-8 w-0.5 bg-gradient-to-b from-gray-600 to-green-500"></div>
+                            <div class="px-4 py-2 bg-green-900 border border-green-700 rounded-full shadow-lg">
+                                <span class="text-green-300 text-xs font-bold font-mono">HIGH QUALITY CODE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

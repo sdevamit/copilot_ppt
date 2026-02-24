@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Copilot Chat: Ask Mode</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            /* GitHub Dark Dim */
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Background Pattern */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        /* Gradient Glows */
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .glow-blue {
+            width: 500px;
+            height: 500px;
+            background-color: #388bfd;
+            top: -200px;
+            right: -100px;
+        }
+
+        .glow-purple {
+            width: 300px;
+            height: 300px;
+            background-color: #a371f7;
+            bottom: -100px;
+            left: -50px;
+            opacity: 0.2;
+        }
+
+        /* Layout */
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            z-index: 10;
+            padding: 40px 60px;
+            gap: 50px;
+            align-items: center;
+        }
+
+        /* Left Column: Text Content */
+        .text-column {
+            flex: 0 0 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 24px;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background-color: rgba(48, 54, 61, 0.4);
+            border-color: rgba(48, 54, 61, 0.8);
+            transform: translateX(10px);
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 18px;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        /* Right Column: Code/Chat Window */
+        .code-column {
+            flex: 1;
+            height: 580px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mac-window {
+            width: 100%;
+            height: 100%;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .window-header {
+            background-color: #0d1117;
+            padding: 12px 16px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .red {
+            background-color: #ff5f56;
+        }
+
+        .yellow {
+            background-color: #ffbd2e;
+        }
+
+        .green {
+            background-color: #27c93f;
+        }
+
+        .tab-bar {
+            display: flex;
+            margin-left: 16px;
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        .tab {
+            padding: 4px 12px;
+            background-color: #161b22;
+            color: #e6edf3;
+            border-top: 2px solid #a371f7;
+            /* Purple for Chat */
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-content {
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e6edf3;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Custom Styles for Chat Simulation */
+        .chat-bubble {
+            margin-bottom: 20px;
+            border-left: 3px solid transparent;
+            padding-left: 12px;
+        }
+
+        .chat-user {
+            border-color: #388bfd;
+        }
+
+        .chat-copilot {
+            border-color: #a371f7;
+        }
+
+        .chat-header {
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .user-name {
+            color: #58a6ff;
+        }
+
+        .copilot-name {
+            color: #bc8cff;
+        }
+
+        /* Syntax Highlighting */
+        .kwd {
+            color: #ff7b72;
+        }
+
+        .fn {
+            color: #d2a8ff;
+        }
+
+        .str {
+            color: #a5d6ff;
+        }
+
+        .num {
+            color: #79c0ff;
+        }
+
+        .cls {
+            color: #ffa657;
+        }
+
+        .cmt {
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        .op {
+            color: #79c0ff;
+        }
+
+        .code-block {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+
+        .highlight-bg {
+            background-color: rgba(56, 139, 253, 0.1);
+            border-radius: 4px;
+            padding: 2px 4px;
+            color: #58a6ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Background -->
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-blue"></div>
+        <div class="glow-spot glow-purple"></div>
+        <div class="content-wrapper">
+            <!-- Left Column: Text -->
+            <div class="text-column">
+                <div class="mb-8">
+                    <h2 class="text-blue-400 text-sm font-bold tracking-widest uppercase mb-2">Copilot Chat</h2>
+                    <h1 class="text-4xl font-bold text-white mb-2">Ask: Conversational Q&amp;A</h1>
+                    <p class="text-gray-400 text-lg">Your technical partner for architecture, debugging, and
+                        exploration.</p>
+                </div>
+                <!-- Feature 1 -->
+                <div class="feature-item">
+                    <div class="feature-icon" style="background-color: rgba(56, 139, 253, 0.15); color: #58a6ff;">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Interactive Discussions</h3>
+                        <p class="text-gray-400 text-sm">Don't just code—discuss trade-offs. Ask "What are the pros/cons
+                            of X vs Y?"</p>
+                    </div>
+                </div>
+                <!-- Feature 2 -->
+                <div class="feature-item">
+                    <div class="feature-icon" style="background-color: rgba(210, 168, 255, 0.15); color: #d2a8ff;">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Debugging Assistant</h3>
+                        <p class="text-gray-400 text-sm">Paste stack traces or error logs. Ask for root causes and
+                            verification steps.</p>
+                    </div>
+                </div>
+                <!-- Feature 3 -->
+                <div class="feature-item">
+                    <div class="feature-icon" style="background-color: rgba(63, 185, 80, 0.15); color: #3fb950;">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Context is King</h3>
+                        <p class="text-gray-400 text-sm">Reference specific files in your prompt to ground the AI's
+                            reasoning in your actual code.</p>
+                    </div>
+                </div>
+                <!-- Pro Tip -->
+                <div class="mt-4 p-4 rounded-lg border border-gray-700 bg-gray-800 bg-opacity-50">
+                    <p class="text-xs text-gray-400 uppercase font-bold mb-1"><i
+                            class="fas fa-lightbulb text-yellow-500 mr-2"></i> Pro Tip</p>
+                    <p class="text-sm text-gray-300">Use <span
+                            class="font-mono bg-gray-700 px-1 rounded text-blue-300">@workspace</span> to ask questions
+                        about the entire project structure.</p>
+                </div>
+            </div>
+            <!-- Right Column: Chat Simulation -->
+            <div class="code-column">
+                <div class="mac-window">
+                    <div class="window-header">
+                        <div class="window-controls">
+                            <div class="control-dot red"></div>
+                            <div class="control-dot yellow"></div>
+                            <div class="control-dot green"></div>
+                        </div>
+                        <div class="tab-bar">
+                            <div class="tab">
+                                <i class="fas fa-comment-dots text-purple-400 text-xs"></i> Copilot Chat
+                            </div>
+                        </div>
+                    </div>
+                    <div class="code-content">
+                        <!-- User Message -->
+                        <div class="chat-bubble chat-user">
+                            <div class="chat-header user-name">You</div>
+                            <p class="text-gray-300 mb-2">Context: <span class="highlight-bg">auth/service.ts</span></p>
+                            <p class="text-gray-300">How should I implement refresh tokens here? Compare <span
+                                    class="text-blue-300">rotating</span> vs <span class="text-blue-300">sliding</span>
+                                sessions. Which is safer?</p>
+                        </div>
+                        <!-- Copilot Response -->
+                        <div class="chat-bubble chat-copilot">
+                            <div class="chat-header copilot-name">GitHub Copilot</div>
+                            <p class="text-gray-300 mb-3">Based on your auth service, here is a comparison:</p>
+                            <p class="text-gray-300 mb-2"><strong class="text-white">1. Rotating Tokens
+                                    (Recommended)</strong><br />
+                                Each use invalidates the old token. <span class="text-green-400">Higher security</span>
+                                because stolen tokens expire quickly.</p>
+                            <p class="text-gray-300 mb-2"><strong class="text-white">2. Sliding Sessions</strong><br />
+                                Extends expiration on activity. Better UX, but a stolen token remains valid longer.</p>
+                            <p class="text-gray-400 text-sm italic mt-3 mb-1">Proposed Implementation:</p>
+                            <div class="code-block">
+                                <div><span class="kwd">interface</span> <span class="cls">TokenConfig</span> {</div>
+                                <div>  mode: <span class="str">'rotating'</span>;</div>
+                                <div>  <span class="cmt">// 15m window to handle race conditions</span></div>
+                                <div>  gracePeriod: <span class="str">'15m'</span>;</div>
+                                <div>}</div>
+                                <div></div>
+                                <div><span class="kwd">function</span> <span class="fn">validateToken</span>(<span
+                                        class="kwd">token</span>) {</div>
+                                <div>  <span class="kwd">if</span> (token.<span class="fn">isReused</span>()) {</div>
+                                <div>    <span class="cmt">// Security: Revoke entire family</span></div>
+                                <div>    <span class="kwd">return</span> <span class="kwd">this</span>.<span
+                                        class="fn">revokeFamily</span>(token.sub);</div>
+                                <div>  }</div>
+                                <div>}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>The Art of Effective Prompting</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            /* GitHub Dark Dim */
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Background Pattern */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        /* Central Glow */
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            opacity: 0.15;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .glow-blue {
+            width: 800px;
+            height: 600px;
+            background-color: #58a6ff;
+        }
+
+        .glow-purple {
+            width: 600px;
+            height: 600px;
+            background-color: #bc8cff;
+            mix-blend-mode: screen;
+        }
+
+        /* Large Background Symbol */
+        .bg-symbol {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 500px;
+            font-weight: 700;
+            color: #161b22;
+            /* Very dark contrast against bg */
+            z-index: 0;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.5;
+            pointer-events: none;
+            user-select: none;
+            letter-spacing: -20px;
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            padding: 0 40px;
+        }
+
+        /* Typography */
+        .title-primary {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 24px;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .title-accent {
+            color: #58a6ff;
+            position: relative;
+            display: inline-block;
+        }
+
+        .title-accent::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-color: rgba(88, 166, 255, 0.3);
+            z-index: -1;
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: #8b949e;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.6;
+            margin-bottom: 48px;
+            font-weight: 300;
+        }
+
+        /* Concept Pills */
+        .pills-container {
+            display: flex;
+            gap: 24px;
+        }
+
+        .concept-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background-color: rgba(22, 27, 34, 0.8);
+            border: 1px solid #30363d;
+            border-radius: 100px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #c9d1d9;
+            backdrop-filter: blur(4px);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .concept-pill:hover {
+            transform: translateY(-2px);
+            border-color: #8b949e;
+            background-color: rgba(48, 54, 61, 0.5);
+        }
+
+        .pill-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Decoration */
+        .separator {
+            width: 80px;
+            height: 4px;
+            background-color: #30363d;
+            border-radius: 2px;
+            margin-bottom: 48px;
+        }
+
+        .section-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #bc8cff;
+            border: 1px solid rgba(188, 140, 255, 0.3);
+            background-color: rgba(188, 140, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Background Elements -->
+        <div class="grid-bg"></div>
+        <div class="bg-symbol">&gt;_</div>
+        <div class="glow-spot glow-blue"></div>
+        <div class="glow-spot glow-purple"></div>
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <!-- Badge -->
+            <div class="section-badge">
+                <i class="fas fa-layer-group text-xs"></i>
+                <span>Section 03</span>
+            </div>
+            <!-- Title -->
+            <h1 class="title-primary">
+                The Art of<br />
+                <span class="title-accent">Effective Prompting</span>
+            </h1>
+            <!-- Subtitle -->
+            <p class="subtitle">
+                Moving from "Code Generation" to "Intent Engineering".<br />
+                How to communicate context and constraints to your AI pair programmer.
+            </p>
+            <!-- Decorative Separator -->
+            <div class="separator"></div>
+            <!-- Preview Pills -->
+            <div class="pills-container">
+                <div class="concept-pill">
+                    <div class="pill-dot" style="background-color: #58a6ff;"></div>
+                    <span>Context is King</span>
+                </div>
+                <div class="concept-pill">
+                    <div class="pill-dot" style="background-color: #bc8cff;"></div>
+                    <span>Single Responsibility</span>
+                </div>
+                <div class="concept-pill">
+                    <div class="pill-dot" style="background-color: #3fb950;"></div>
+                    <span>Iterative Refinement</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

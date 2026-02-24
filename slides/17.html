@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Workflow Integration: The Daily Coding Loop</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .grid-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.12;
+            width: 600px; height: 600px;
+            background-color: #bc8cff;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 32px 60px 24px;
+        }
+
+        .header { margin-bottom: 16px; }
+
+        .diagram-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -60; }
+        }
+        .line-ai { animation: dash 2s linear infinite; }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <div class="grid-bg"></div>
+        <div class="glow-spot"></div>
+
+        <div class="content-wrapper">
+            <div class="header">
+                <h2 class="text-blue-400 text-sm font-bold tracking-widest uppercase mb-1">Workflow Integration</h2>
+                <h1 class="text-4xl font-bold text-white">The Daily Coding Loop</h1>
+                <p class="text-gray-400 mt-1 text-sm">Iterative development cycle powered by AI collaboration.</p>
+            </div>
+
+            <!--
+                Single SVG diagram — all nodes and connectors share one coordinate space.
+                ViewBox: 0 0 1160 470
+                Node centres:
+                  1. Plan     (110, 235)
+                  2. Write    (370,  75)
+                  3. Suggest  (790,  75)
+                  4. Verify   (790, 395)
+                  5. Refine   (370, 395)
+                  6. Commit  (1050, 235)
+            -->
+            <div class="diagram-area">
+                <svg viewBox="0 0 1160 470" width="1160" height="470"
+                     xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
+                    <defs>
+                        <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                            <polygon points="0 0,8 3,0 6" fill="#30363d"/>
+                        </marker>
+                        <marker id="arr-ai" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                            <polygon points="0 0,8 3,0 6" fill="#58a6ff" fill-opacity="0.8"/>
+                        </marker>
+                        <marker id="arr-g" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                            <polygon points="0 0,8 3,0 6" fill="#3fb950" fill-opacity="0.8"/>
+                        </marker>
+                        <linearGradient id="grad-ai" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#1f6feb"/>
+                            <stop offset="100%" stop-color="#8957e5"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Loop boundary -->
+                    <rect x="268" y="14" width="624" height="442" rx="24"
+                          fill="none" stroke="#30363d" stroke-width="1.5" stroke-dasharray="8 5" opacity="0.5"/>
+                    <text x="580" y="238" text-anchor="middle" dominant-baseline="middle"
+                          font-family="'JetBrains Mono',monospace" font-size="11" fill="#30363d"
+                          letter-spacing="5" font-weight="700" opacity="0.35"
+                          transform="rotate(-25,580,238)">ITERATE</text>
+
+                    <!-- ── Connector lines ── -->
+                    <!-- Plan → Write -->
+                    <path d="M 190,205 C 250,205 268,75 290,75"
+                          fill="none" stroke="#30363d" stroke-width="1.5"
+                          stroke-dasharray="6 4" marker-end="url(#arr)"/>
+                    <!-- Write → Suggest (AI, animated) -->
+                    <line x1="450" y1="75" x2="710" y2="75"
+                          stroke="#58a6ff" stroke-width="2" opacity="0.65"
+                          stroke-dasharray="10 6" marker-end="url(#arr-ai)"
+                          class="line-ai"/>
+                    <!-- Suggest → Verify (AI, animated) -->
+                    <line x1="790" y1="140" x2="790" y2="330"
+                          stroke="#58a6ff" stroke-width="2" opacity="0.65"
+                          stroke-dasharray="10 6" marker-end="url(#arr-ai)"
+                          class="line-ai"/>
+                    <!-- Verify → Refine -->
+                    <line x1="710" y1="395" x2="450" y2="395"
+                          stroke="#30363d" stroke-width="1.5"
+                          stroke-dasharray="6 4" marker-end="url(#arr)"/>
+                    <!-- Refine → Write (loop back) -->
+                    <line x1="370" y1="330" x2="370" y2="140"
+                          stroke="#30363d" stroke-width="1.5"
+                          stroke-dasharray="6 4" marker-end="url(#arr)"/>
+                    <!-- Verify → Commit -->
+                    <path d="M 870,365 C 940,365 970,235 970,235"
+                          fill="none" stroke="#3fb950" stroke-width="1.5" opacity="0.7"
+                          stroke-dasharray="6 4" marker-end="url(#arr-g)"/>
+
+                    <!-- ══ NODE 1: Plan ══ box 30,170 → 190,300 -->
+                    <rect x="30" y="170" width="160" height="130" rx="12"
+                          fill="#161b22" stroke="#30363d" stroke-width="1" stroke-dasharray="5 3"/>
+                    <circle cx="110" cy="210" r="22"
+                            fill="rgba(88,166,255,0.12)" stroke="rgba(88,166,255,0.3)" stroke-width="1"/>
+                    <text x="110" y="210" text-anchor="middle" dominant-baseline="central"
+                          font-family="'Font Awesome 6 Free'" font-weight="900" font-size="14" fill="#58a6ff">&#xf46d;</text>
+                    <rect x="75" y="175" width="70" height="15" rx="7"
+                          fill="none" stroke="#30363d" stroke-width="1"/>
+                    <text x="110" y="183" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="9" fill="#8b949e" letter-spacing="1" font-weight="600">HUMAN</text>
+                    <text x="110" y="239" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="14" fill="#e6edf3" font-weight="700">1. Plan</text>
+                    <foreignObject x="36" y="251" width="148" height="44">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="font-family:Inter,sans-serif;font-size:10px;color:#8b949e;text-align:center;line-height:1.4;">
+                            Define intent, scope &amp; break down task
+                        </div>
+                    </foreignObject>
+
+                    <!-- ══ NODE 2: Write Intent ══ box 290,12 → 450,138 -->
+                    <rect x="290" y="12" width="160" height="126" rx="12"
+                          fill="#161b22" stroke="#30363d" stroke-width="1"/>
+                    <circle cx="370" cy="50" r="22"
+                            fill="rgba(210,168,255,0.12)" stroke="rgba(210,168,255,0.3)" stroke-width="1"/>
+                    <text x="370" y="50" text-anchor="middle" dominant-baseline="central"
+                          font-family="'Font Awesome 6 Free'" font-weight="900" font-size="14" fill="#d2a8ff">&#xf121;</text>
+                    <rect x="335" y="17" width="70" height="15" rx="7"
+                          fill="none" stroke="#30363d" stroke-width="1"/>
+                    <text x="370" y="25" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="9" fill="#8b949e" letter-spacing="1" font-weight="600">HUMAN</text>
+                    <text x="370" y="79" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="14" fill="#e6edf3" font-weight="700">2. Write Intent</text>
+                    <foreignObject x="296" y="91" width="148" height="42">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="font-family:Inter,sans-serif;font-size:10px;color:#8b949e;text-align:center;line-height:1.4;">
+                            Write comments, types or test stubs
+                        </div>
+                    </foreignObject>
+
+                    <!-- ══ NODE 3: Suggest (AI) ══ box 710,12 → 870,138 -->
+                    <rect x="710" y="12" width="160" height="126" rx="12"
+                          fill="rgba(31,111,235,0.1)" stroke="rgba(56,139,253,0.35)" stroke-width="1.5"/>
+                    <circle cx="790" cy="50" r="22" fill="url(#grad-ai)"/>
+                    <text x="790" y="50" text-anchor="middle" dominant-baseline="central"
+                          font-family="'Font Awesome 6 Free'" font-weight="900" font-size="14" fill="white">&#xf544;</text>
+                    <rect x="735" y="17" width="110" height="15" rx="7"
+                          fill="rgba(210,168,255,0.1)" stroke="rgba(210,168,255,0.3)" stroke-width="1"/>
+                    <text x="790" y="25" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="9" fill="#d2a8ff" letter-spacing="1" font-weight="600">AI ASSISTANT</text>
+                    <text x="790" y="79" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="14" fill="#e6edf3" font-weight="700">3. Suggest</text>
+                    <foreignObject x="716" y="91" width="148" height="42">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="font-family:Inter,sans-serif;font-size:10px;color:#8b949e;text-align:center;line-height:1.4;">
+                            Copilot proposes code, logic &amp; boilerplate
+                        </div>
+                    </foreignObject>
+
+                    <!-- ══ NODE 4: Verify ══ box 710,332 → 870,458 -->
+                    <rect x="710" y="332" width="160" height="126" rx="12"
+                          fill="#161b22" stroke="#30363d" stroke-width="1"/>
+                    <circle cx="790" cy="370" r="22"
+                            fill="rgba(242,204,96,0.12)" stroke="rgba(242,204,96,0.3)" stroke-width="1"/>
+                    <text x="790" y="370" text-anchor="middle" dominant-baseline="central"
+                          font-family="'Font Awesome 6 Free'" font-weight="900" font-size="14" fill="#e3b341">&#xf06e;</text>
+                    <rect x="755" y="337" width="70" height="15" rx="7"
+                          fill="none" stroke="#30363d" stroke-width="1"/>
+                    <text x="790" y="345" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="9" fill="#8b949e" letter-spacing="1" font-weight="600">HUMAN</text>
+                    <text x="790" y="399" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="14" fill="#e6edf3" font-weight="700">4. Verify</text>
+                    <foreignObject x="716" y="411" width="148" height="42">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="font-family:Inter,sans-serif;font-size:10px;color:#8b949e;text-align:center;line-height:1.4;">
+                            Review diffs, run tests, check security
+                        </div>
+                    </foreignObject>
+
+                    <!-- ══ NODE 5: Refine ══ box 290,332 → 450,458 -->
+                    <rect x="290" y="332" width="160" height="126" rx="12"
+                          fill="#161b22" stroke="#30363d" stroke-width="1"/>
+                    <circle cx="370" cy="370" r="22"
+                            fill="rgba(248,81,73,0.1)" stroke="rgba(248,81,73,0.3)" stroke-width="1"/>
+                    <text x="370" y="370" text-anchor="middle" dominant-baseline="central"
+                          font-family="'Font Awesome 6 Free'" font-weight="900" font-size="14" fill="#f85149">&#xf1de;</text>
+                    <rect x="335" y="337" width="70" height="15" rx="7"
+                          fill="none" stroke="#30363d" stroke-width="1"/>
+                    <text x="370" y="345" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="9" fill="#8b949e" letter-spacing="1" font-weight="600">MIXED</text>
+                    <text x="370" y="399" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="14" fill="#e6edf3" font-weight="700">5. Refine</text>
+                    <foreignObject x="296" y="411" width="148" height="42">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="font-family:Inter,sans-serif;font-size:10px;color:#8b949e;text-align:center;line-height:1.4;">
+                            Use Chat/Inline to tweak &amp; optimise
+                        </div>
+                    </foreignObject>
+
+                    <!-- ══ NODE 6: Commit ══ box 970,170 → 1130,300 -->
+                    <rect x="970" y="170" width="160" height="130" rx="12"
+                          fill="#161b22" stroke="#30363d" stroke-width="1" stroke-dasharray="5 3"/>
+                    <circle cx="1050" cy="210" r="22"
+                            fill="rgba(46,160,67,0.12)" stroke="rgba(46,160,67,0.3)" stroke-width="1"/>
+                    <text x="1050" y="210" text-anchor="middle" dominant-baseline="central"
+                          font-family="'Font Awesome 6 Free'" font-weight="900" font-size="14" fill="#3fb950">&#xf00c;</text>
+                    <rect x="1015" y="175" width="70" height="15" rx="7"
+                          fill="none" stroke="#30363d" stroke-width="1"/>
+                    <text x="1050" y="183" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="9" fill="#8b949e" letter-spacing="1" font-weight="600">HUMAN</text>
+                    <text x="1050" y="239" text-anchor="middle" dominant-baseline="central"
+                          font-family="Inter,sans-serif" font-size="14" fill="#e6edf3" font-weight="700">6. Commit</text>
+                    <foreignObject x="976" y="251" width="148" height="44">
+                        <div xmlns="http://www.w3.org/1999/xhtml"
+                             style="font-family:Inter,sans-serif;font-size:10px;color:#8b949e;text-align:center;line-height:1.4;">
+                            Finalise changes &amp; merge PR
+                        </div>
+                    </foreignObject>
+
+                </svg>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

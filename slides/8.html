@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Copilot Chat: Participants (@-Mentions)</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            /* GitHub Dark Dim */
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Background Pattern */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        /* Ambient Glow */
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.2;
+        }
+
+        .glow-right {
+            width: 600px;
+            height: 600px;
+            background-color: #bc8cff;
+            /* Purple glow for agents */
+            top: 50%;
+            right: -200px;
+            transform: translateY(-50%);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: flex;
+            z-index: 10;
+            padding: 60px 80px;
+            height: 100%;
+            gap: 60px;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            flex: 0 0 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .title-badge {
+            background-color: rgba(188, 140, 255, 0.15);
+            color: #d2a8ff;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            align-self: flex-start;
+            margin-bottom: 24px;
+            border: 1px solid rgba(188, 140, 255, 0.3);
+        }
+
+        /* Right Content: Command Cards */
+        .commands-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .command-card {
+            background-color: rgba(22, 27, 34, 0.8);
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .command-card:hover {
+            border-color: #8b949e;
+            background-color: rgba(22, 27, 34, 0.95);
+            transform: translateX(5px);
+        }
+
+        .cmd-token-wrapper {
+            flex: 0 0 160px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .cmd-token {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            color: #e6edf3;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .cmd-desc-area {
+            flex: 1;
+        }
+
+        .cmd-example {
+            background-color: rgba(48, 54, 61, 0.3);
+            border-left: 3px solid #d2a8ff;
+            padding: 8px 12px;
+            margin-top: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        /* Specific Token Colors */
+        .token-workspace {
+            color: #d2a8ff;
+        }
+
+        /* Purple */
+        .token-vscode {
+            color: #79c0ff;
+        }
+
+        /* Blue */
+        .token-terminal {
+            color: #7ee787;
+        }
+
+        /* Green */
+
+        .icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #21262d;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Background -->
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-right"></div>
+        <div class="content-wrapper">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="title-badge">
+                    <i class="fas fa-robot mr-2"></i>Copilot Chat
+                </div>
+                <h1 class="text-5xl font-bold text-white mb-6 leading-tight">Chat <br /><span
+                        style="color: #bc8cff;">Participants</span></h1>
+                <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                    Use <code
+                        style="color:#bc8cff;background:rgba(163,113,247,0.1);padding:1px 5px;border-radius:4px;">@</code>-mentions
+                    to route your prompt to the right context engine. These are <strong class="text-white">chat
+                        participants</strong> — distinct from the <strong class="text-white">Agent Mode</strong>
+                    sub-mode.
+                    Each expands what Copilot can see and act on.
+                </p>
+                <div class="p-6 bg-gray-900 bg-opacity-50 border border-gray-800 rounded-xl">
+                    <h3 class="text-sm font-semibold text-gray-300 mb-2 uppercase tracking-wide">Pro Tip</h3>
+                    <p class="text-gray-400 text-sm">
+                        Combine participants + slash commands:
+                        <br />
+                        <span class="mono-font text-purple-300 mt-2 block bg-black bg-opacity-30 p-2 rounded">@workspace
+                            /explain</span>
+                        <span class="mono-font text-yellow-300 mt-1 block bg-black bg-opacity-30 p-2 rounded">@github
+                            list open bugs</span>
+                        <span class="text-gray-500 text-xs mt-2 block">Works with Ask, Plan, and Agent modes</span>
+                    </p>
+                </div>
+            </div>
+            <!-- Command List -->
+            <div class="commands-list">
+                <!-- Card 1: @workspace -->
+                <div class="command-card group">
+                    <div class="cmd-token-wrapper">
+                        <div class="cmd-token group-hover:border-purple-500 group-hover:text-white transition-colors">
+                            <span class="token-workspace">@workspace</span>
+                        </div>
+                    </div>
+                    <div class="cmd-desc-area">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h3 class="text-xl font-bold text-white">Repository Context</h3>
+                            <span
+                                class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-900 text-purple-200 border border-purple-700">REPO-AWARE</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3">Answers questions using knowledge of the entire folder
+                            structure, file relationships, and symbols.</p>
+                        <div class="cmd-example" style="border-left-color: #d2a8ff;">
+                            <span class="token-workspace">@workspace</span> list call sites of fetchUser &amp; find
+                            deprecated patterns.
+                        </div>
+                    </div>
+                    <div class="icon-box text-purple-400 border-purple-900 bg-purple-900 bg-opacity-10">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                </div>
+                <!-- Card 2: @vscode -->
+                <div class="command-card group">
+                    <div class="cmd-token-wrapper">
+                        <div class="cmd-token group-hover:border-blue-500 group-hover:text-white transition-colors">
+                            <span class="token-vscode">@vscode</span>
+                        </div>
+                    </div>
+                    <div class="cmd-desc-area">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h3 class="text-xl font-bold text-white">Editor Automation</h3>
+                            <span
+                                class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-900 text-blue-200 border border-blue-700">IDE
+                                CONTROL</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3">Controls VS Code UI. Can open files, create new files, run
+                            tasks, or change settings.</p>
+                        <div class="cmd-example" style="border-left-color: #79c0ff;">
+                            <span class="token-vscode">@vscode</span> create src/services/user/mapper.ts with a typed
+                            skeleton.
+                        </div>
+                    </div>
+                    <div class="icon-box text-blue-400 border-blue-900 bg-blue-900 bg-opacity-10">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                </div>
+                <!-- Card 3: @terminal -->
+                <div class="command-card group">
+                    <div class="cmd-token-wrapper">
+                        <div class="cmd-token group-hover:border-green-500 group-hover:text-white transition-colors">
+                            <span class="token-terminal">@terminal</span>
+                        </div>
+                    </div>
+                    <div class="cmd-desc-area">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h3 class="text-xl font-bold text-white">Shell Commands</h3>
+                            <span
+                                class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-900 text-green-200 border border-green-700">CLI</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3">Proposes shell commands to run in the integrated terminal.
+                            Great for git, npm, or migrations.</p>
+                        <div class="cmd-example" style="border-left-color: #7ee787;">
+                            <span class="token-terminal">@terminal</span> show command to run db migrations locally.
+                        </div>
+                    </div>
+                    <div class="icon-box text-green-400 border-green-900 bg-green-900 bg-opacity-10">
+                        <i class="fas fa-terminal"></i>
+                    </div>
+                </div>
+                <!-- Card 4: @github (NEW) -->
+                <div class="command-card group">
+                    <div class="cmd-token-wrapper">
+                        <div class="cmd-token group-hover:border-yellow-500 group-hover:text-white transition-colors">
+                            <span style="color: #e3b341;">@github</span>
+                        </div>
+                    </div>
+                    <div class="cmd-desc-area">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h3 class="text-xl font-bold text-white">GitHub Context</h3>
+                            <span
+                                class="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-900 text-yellow-200 border border-yellow-700">NEW</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-3">Query GitHub issues, pull requests, discussions, and
+                            repository data directly from your chat.</p>
+                        <div class="cmd-example" style="border-left-color: #e3b341;">
+                            <span style="color: #e3b341;">@github</span> list open bugs assigned to me in this repo.
+                        </div>
+                    </div>
+                    <div class="icon-box text-yellow-400 border-yellow-900 bg-yellow-900 bg-opacity-10">
+                        <i class="fab fa-github"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Security, Privacy &amp; Responsible Use</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+        }
+
+        .glow-red {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(218, 54, 51, 0.07);
+            top: -100px;
+            left: -100px;
+        }
+
+        .glow-blue {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(88, 166, 255, 0.07);
+            bottom: -100px;
+            right: -100px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            z-index: 10;
+            padding: 22px 52px;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .left-col {
+            flex: 0 0 52%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .security-card {
+            background-color: rgba(22, 27, 34, 0.8);
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 11px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .security-card:hover {
+            transform: translateX(6px);
+            border-color: #58a6ff;
+        }
+
+        .sec-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .do-card {
+            border-left: 3px solid rgba(63, 185, 80, 0.6);
+        }
+
+        .dont-card {
+            border-left: 3px solid rgba(248, 81, 73, 0.6);
+        }
+
+        .privacy-table {
+            width: 100%;
+        }
+
+        .privacy-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 0;
+            gap: 12px;
+            background-color: rgba(22, 27, 34, 0.7);
+            border: 1px solid #30363d;
+        }
+
+        .privacy-icon-wrap {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+        .alert-box {
+            padding: 10px 14px;
+            border-radius: 8px;
+            background-color: rgba(218, 54, 51, 0.08);
+            border: 1px solid rgba(218, 54, 51, 0.3);
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-red"></div>
+        <div class="glow-spot glow-blue"></div>
+        <div class="content-wrapper">
+            <!-- Left Column -->
+            <div class="left-col">
+                <div class="mb-3">
+                    <h2 class="text-red-400 text-sm font-bold tracking-widest uppercase mb-1">Critical Awareness</h2>
+                    <h1 class="text-3xl font-bold text-white mb-1">Security, Privacy &amp; Responsible Use</h1>
+                    <p class="text-gray-400 text-base">You are the last line of defense. Review everything.</p>
+                </div>
+
+                <!-- Alert box -->
+                <div class="alert-box">
+                    <i class="fas fa-exclamation-triangle text-red-400 mt-1"></i>
+                    <p class="text-sm text-red-200">Copilot suggestions are probabilistic, not authoritative. Always
+                        verify generated code before shipping to production.</p>
+                </div>
+
+                <!-- DOs -->
+                <div class="security-card do-card mb-3">
+                    <div class="sec-icon" style="background-color: rgba(63,185,80,0.15); color: #3fb950;"><i
+                            class="fas fa-check-circle"></i></div>
+                    <div>
+                        <h3 class="text-white font-semibold text-base mb-1">DO: Review for Vulnerabilities</h3>
+                        <p class="text-gray-400 text-sm">Scan for SQL injection, XSS, insecure deserialization, and weak
+                            cryptography in generated code. Use SAST tools as a second check.</p>
+                    </div>
+                </div>
+                <div class="security-card do-card mb-3">
+                    <div class="sec-icon" style="background-color: rgba(63,185,80,0.15); color: #3fb950;"><i
+                            class="fas fa-shield-alt"></i></div>
+                    <div>
+                        <h3 class="text-white font-semibold text-base mb-1">DO: Use Content Exclusions</h3>
+                        <p class="text-gray-400 text-sm">Configure <span
+                                class="mono-font text-xs bg-gray-800 px-1 rounded text-blue-300">.copilotignore</span>
+                            to exclude sensitive files (e.g., secrets, internal schemas) from Copilot context.</p>
+                    </div>
+                </div>
+                <!-- DON'Ts -->
+                <div class="security-card dont-card mb-3">
+                    <div class="sec-icon" style="background-color: rgba(248,81,73,0.15); color: #f85149;"><i
+                            class="fas fa-ban"></i></div>
+                    <div>
+                        <h3 class="text-white font-semibold text-base mb-1">DON'T: Paste Secrets</h3>
+                        <p class="text-gray-400 text-sm">Never include API keys, passwords, tokens, or PII directly in
+                            prompts or in code sent to Copilot. Use environment variables instead.</p>
+                    </div>
+                </div>
+                <div class="security-card dont-card">
+                    <div class="sec-icon" style="background-color: rgba(248,81,73,0.15); color: #f85149;"><i
+                            class="fas fa-copyright"></i></div>
+                    <div>
+                        <h3 class="text-white font-semibold text-base mb-1">DON'T: Ignore License Flags</h3>
+                        <p class="text-gray-400 text-sm">Copilot can detect and flag suggestions matching public code.
+                            Review flagged suggestions for license compatibility (MIT, GPL, etc.) before using.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Privacy Facts -->
+            <div class="right-col">
+                <h2 class="text-gray-300 text-sm font-bold tracking-widest uppercase mb-2">Data Privacy Facts</h2>
+
+                <div class="privacy-row">
+                    <div class="privacy-icon-wrap" style="background-color: rgba(63,185,80,0.15); color: #3fb950;"><i
+                            class="fas fa-user-secret"></i></div>
+                    <div>
+                        <p class="text-white text-sm font-semibold mb-0.5">Code is NOT used to train models</p>
+                        <p class="text-gray-400 text-xs">With Copilot for Business/Enterprise, your code snippets are
+                            not retained or used for model training by GitHub.</p>
+                    </div>
+                </div>
+
+                <div class="privacy-row">
+                    <div class="privacy-icon-wrap" style="background-color: rgba(56,139,253,0.15); color: #58a6ff;"><i
+                            class="fas fa-network-wired"></i></div>
+                    <div>
+                        <p class="text-white text-sm font-semibold mb-0.5">Prompts sent to GitHub's servers</p>
+                        <p class="text-gray-400 text-xs">Your code context (snippets + surrounding code) is sent to
+                            GitHub's AI infrastructure over TLS-encrypted connections.</p>
+                    </div>
+                </div>
+
+                <div class="privacy-row">
+                    <div class="privacy-icon-wrap" style="background-color: rgba(210,168,255,0.15); color: #d2a8ff;"><i
+                            class="fas fa-building"></i></div>
+                    <div>
+                        <p class="text-white text-sm font-semibold mb-0.5">Enterprise: Org-level policies</p>
+                        <p class="text-gray-400 text-xs">Admins can restrict which repos and file patterns Copilot can
+                            read, providing compliance and IP protection controls.</p>
+                    </div>
+                </div>
+
+                <div class="privacy-row">
+                    <div class="privacy-icon-wrap" style="background-color: rgba(227,179,65,0.15); color: #e3b341;"><i
+                            class="fas fa-filter"></i></div>
+                    <div>
+                        <p class="text-white text-sm font-semibold mb-0.5">Duplication detection filter</p>
+                        <p class="text-gray-400 text-xs">Copilot can optionally filter out suggestions that match
+                            verbatim blocks of public code, protecting against unintended license obligations.</p>
+                    </div>
+                </div>
+
+                <div class="privacy-row">
+                    <div class="privacy-icon-wrap" style="background-color: rgba(248,81,73,0.15); color: #f85149;"><i
+                            class="fas fa-eye-slash"></i></div>
+                    <div>
+                        <p class="text-white text-sm font-semibold mb-0.5">No output guarantee</p>
+                        <p class="text-gray-400 text-xs">Suggestions may contain security anti-patterns. Run SAST
+                            (CodeQL, Snyk) on all AI-generated code as part of your CI pipeline.</p>
+                    </div>
+                </div>
+
+                <!-- Bottom badge -->
+                <div
+                    class="mt-3 p-3 rounded-lg border border-gray-700 bg-gray-800 bg-opacity-50 flex items-center gap-3">
+                    <i class="fas fa-info-circle text-blue-400"></i>
+                    <p class="text-xs text-gray-300">See GitHub's <span class="text-blue-300">Privacy Statement</span>
+                        and <span class="text-blue-300">Copilot Trust Center</span> for full terms.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Copilot Enterprise: Beyond Individual Productivity</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+        }
+
+        .glow-gold {
+            width: 500px;
+            height: 500px;
+            background-color: rgba(210, 153, 34, 0.07);
+            top: -150px;
+            right: -100px;
+        }
+
+        .glow-purple {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(137, 87, 229, 0.07);
+            bottom: -100px;
+            left: -100px;
+        }
+
+        .header-area {
+            z-index: 10;
+            padding: 20px 60px 0;
+        }
+
+        .content-grid {
+            z-index: 10;
+            display: flex;
+            padding: 14px 60px 18px;
+            gap: 20px;
+            flex: 1;
+            align-items: stretch;
+        }
+
+        .tier-card {
+            flex: 1;
+            background-color: rgba(22, 27, 34, 0.8);
+            border: 1px solid #30363d;
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s ease;
+        }
+
+        .tier-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .tier-individual {
+            border-top: 3px solid #58a6ff;
+        }
+
+        .tier-business {
+            border-top: 3px solid #3fb950;
+        }
+
+        .tier-enterprise {
+            border-top: 3px solid #d29922;
+            background-color: rgba(22, 27, 34, 0.95);
+        }
+
+        .tier-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .tier-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .tier-tagline {
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .feature-list {
+            flex: 1;
+        }
+
+        .feature-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .check {
+            font-size: 12px;
+            width: 16px;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            font-size: 13px;
+            color: #c9d1d9;
+        }
+
+        .exclusive-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 1px 6px;
+            border-radius: 4px;
+            background-color: rgba(210, 153, 34, 0.2);
+            color: #d29922;
+            border: 1px solid rgba(210, 153, 34, 0.4);
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .tier-price {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #30363d;
+        }
+
+        .price-label {
+            font-size: 11px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .price-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e6edf3;
+            mono-font: 'JetBrains Mono';
+        }
+
+        .enterprise-highlight {
+            background-color: rgba(210, 153, 34, 0.08);
+            border: 1px solid rgba(210, 153, 34, 0.25);
+            border-radius: 8px;
+            padding: 7px 10px;
+            margin-top: 6px;
+        }
+
+        .comparison-note {
+            z-index: 10;
+            padding: 0 60px 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-gold"></div>
+        <div class="glow-spot glow-purple"></div>
+
+        <!-- Header -->
+        <div class="header-area">
+            <h2 class="text-yellow-500 text-sm font-bold tracking-widest uppercase mb-1">Licensing Tiers</h2>
+            <h1 class="text-4xl font-bold text-white">Copilot Enterprise: Beyond Individual Productivity</h1>
+            <p class="text-gray-400 mt-1 text-base">Understand which plan unlocks which capabilities for your team.</p>
+        </div>
+
+        <!-- 3-Column Tier Comparison -->
+        <div class="content-grid">
+            <!-- Individual / Free -->
+            <div class="tier-card tier-individual">
+                <div class="tier-icon" style="background-color: rgba(56,139,253,0.15); color: #58a6ff;">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="tier-name">Copilot Individual</div>
+                <div class="tier-tagline">For individual developers</div>
+                <div class="feature-list">
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">Ghost Text autocomplete</span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">Copilot Chat (sidebar)</span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">Inline Chat &amp; Copilot Edits</span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">All slash commands &amp; agents</span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">Model choice <span style="color:#8b949e;font-size:11px">(available
+                                models vary by plan &amp; org config)</span></span></div>
+                    <div class="feature-row"><span class="check" style="color:#8b949e;">–</span><span
+                            class="feature-text" style="color:#484f58;">Organization knowledge bases</span></div>
+                    <div class="feature-row"><span class="check" style="color:#8b949e;">–</span><span
+                            class="feature-text" style="color:#484f58;">Admin policy controls</span></div>
+                    <div class="feature-row"><span class="check" style="color:#8b949e;">–</span><span
+                            class="feature-text" style="color:#484f58;">Audit logs &amp; compliance</span></div>
+                </div>
+                <div class="tier-price">
+                    <div class="price-label">Starting at</div>
+                    <div class="price-value">$10 / month <span
+                            style="font-size:12px; color:#8b949e; font-weight:400;">(or free for OSS)</span></div>
+                </div>
+            </div>
+
+            <!-- Business -->
+            <div class="tier-card tier-business">
+                <div class="tier-icon" style="background-color: rgba(63,185,80,0.15); color: #3fb950;">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="tier-name">Copilot Business</div>
+                <div class="tier-tagline">For teams &amp; orgs</div>
+                <div class="feature-list">
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">Everything in Individual</span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">No code retention for training</span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">Admin policy management</span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">Content exclusions (.copilotignore)</span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">Audit logs for usage</span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">IP indemnification</span></div>
+                    <div class="feature-row"><span class="check" style="color:#8b949e;">–</span><span
+                            class="feature-text" style="color:#484f58;">Custom knowledge bases</span></div>
+                    <div class="feature-row"><span class="check" style="color:#8b949e;">–</span><span
+                            class="feature-text" style="color:#484f58;">Org knowledge bases (repo indexing)</span></div>
+                </div>
+                <div class="tier-price">
+                    <div class="price-label">Starting at</div>
+                    <div class="price-value">$19 / user / month</div>
+                </div>
+            </div>
+
+            <!-- Enterprise -->
+            <div class="tier-card tier-enterprise">
+                <div class="tier-icon" style="background-color: rgba(210,153,34,0.15); color: #d29922;">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="tier-name" style="color: #d29922;">Copilot Enterprise</div>
+                <div class="tier-tagline">For large organizations</div>
+                <div class="feature-list">
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">Everything in Business</span></div>
+                    <div class="feature-row"><span class="check" style="color:#d29922;">★</span><span
+                            class="feature-text">Org Knowledge Bases <span
+                                class="exclusive-badge">Enterprise</span></span></div>
+                    <div class="feature-row"><span class="check" style="color:#d29922;">★</span><span
+                            class="feature-text">Private repo indexing for Knowledge Bases <span
+                                class="exclusive-badge">Enterprise</span></span></div>
+                    <div class="feature-row"><span class="check" style="color:#d29922;">★</span><span
+                            class="feature-text">Copilot for Pull Requests <span
+                                class="exclusive-badge">Enterprise</span></span></div>
+                    <div class="feature-row"><span class="check" style="color:#d29922;">★</span><span
+                            class="feature-text">Docset indexing &amp; Q&A <span
+                                class="exclusive-badge">Enterprise</span></span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">SAML/SCIM SSO integration</span></div>
+                    <div class="feature-row"><span class="check" style="color:#3fb950;">✓</span><span
+                            class="feature-text">Advanced audit &amp; compliance</span></div>
+                </div>
+                <div class="enterprise-highlight">
+                    <p class="text-xs" style="color: #d29922;"><i class="fas fa-star mr-1"></i><strong>Key
+                            Differentiator:</strong> Knowledge Bases let Copilot answer questions using your own
+                        internal wikis, runbooks, and architecture docs — grounded in your org's context.</p>
+                </div>
+                <div class="tier-price">
+                    <div class="price-label">Starting at</div>
+                    <div class="price-value">$39 / user / month</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Bad vs. Good Prompts</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            /* GitHub Dark Dim */
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Background Pattern */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        /* Ambient Glow */
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.2;
+        }
+
+        .glow-red {
+            width: 400px;
+            height: 400px;
+            background-color: #da3633;
+            top: -100px;
+            left: -100px;
+        }
+
+        .glow-green {
+            width: 500px;
+            height: 500px;
+            background-color: #2ea043;
+            bottom: -150px;
+            right: -100px;
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 40px 60px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .comparison-grid {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* Row Styles */
+        .comparison-row {
+            display: flex;
+            gap: 24px;
+            align-items: stretch;
+            height: 140px;
+        }
+
+        .prompt-card {
+            display: flex;
+            flex-direction: column;
+            border-radius: 12px;
+            padding: 16px 20px;
+            position: relative;
+            border: 1px solid;
+            backdrop-filter: blur(8px);
+            transition: transform 0.2s ease;
+        }
+
+        .bad-card {
+            flex: 0 0 30%;
+            background-color: rgba(218, 54, 51, 0.05);
+            border-color: rgba(218, 54, 51, 0.3);
+        }
+
+        .good-card {
+            flex: 1;
+            background-color: rgba(46, 160, 67, 0.05);
+            border-color: rgba(46, 160, 67, 0.3);
+        }
+
+        .prompt-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .label-bad {
+            color: #ff7b72;
+        }
+
+        .label-good {
+            color: #3fb950;
+        }
+
+        .prompt-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #e6edf3;
+        }
+
+        .context-pill {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background-color: rgba(139, 148, 158, 0.2);
+            color: #8b949e;
+            margin-right: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Highlight keywords in good prompts */
+        .hl-action {
+            color: #79c0ff;
+            font-weight: 600;
+        }
+
+        .hl-scope {
+            color: #d2a8ff;
+            font-weight: 600;
+        }
+
+        .hl-constraint {
+            color: #ffa657;
+        }
+
+        .arrow-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b949e;
+            font-size: 18px;
+            opacity: 0.5;
+            width: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Background -->
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-red"></div>
+        <div class="glow-spot glow-green"></div>
+        <!-- Content -->
+        <div class="content-wrapper">
+            <div class="header">
+                <h2 class="text-blue-400 text-sm font-bold tracking-widest uppercase mb-2">Prompt Engineering</h2>
+                <h1 class="text-4xl font-bold text-white">Bad vs. Good Prompts</h1>
+                <p class="text-gray-400 text-sm mt-2">Precision beats brevity. Add context, constraints, and criteria.
+                </p>
+            </div>
+            <div class="comparison-grid">
+                <!-- Row 1: Refactoring -->
+                <div class="comparison-row">
+                    <!-- Bad -->
+                    <div class="prompt-card bad-card">
+                        <div class="card-label label-bad">
+                            <i class="fas fa-times-circle"></i> Ineffective
+                        </div>
+                        <p class="prompt-text text-gray-400 italic">"Refactor this file"</p>
+                        <div class="mt-auto text-xs text-red-300 opacity-70">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> Too broad, no goal
+                        </div>
+                    </div>
+                    <div class="arrow-divider">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <!-- Good -->
+                    <div class="prompt-card good-card">
+                        <div class="card-label label-good">
+                            <i class="fas fa-check-circle"></i> Effective
+                        </div>
+                        <p class="prompt-text">
+                            <span class="context-pill">INLINE CHAT</span>
+                            <span class="hl-action">Refactor</span> selected function into a <span class="hl-scope">pure
+                                function</span>. Keep signature identical, remove I/O side effects, ensure O(n) time
+                            complexity. <span class="hl-constraint">Provide diff + brief rationale.</span>
+                        </p>
+                    </div>
+                </div>
+                <!-- Row 2: Testing -->
+                <div class="comparison-row">
+                    <!-- Bad -->
+                    <div class="prompt-card bad-card">
+                        <div class="card-label label-bad">
+                            <i class="fas fa-times-circle"></i> Ineffective
+                        </div>
+                        <p class="prompt-text text-gray-400 italic">"Write tests"</p>
+                        <div class="mt-auto text-xs text-red-300 opacity-70">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> No scope or framework
+                        </div>
+                    </div>
+                    <div class="arrow-divider">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <!-- Good -->
+                    <div class="prompt-card good-card">
+                        <div class="card-label label-good">
+                            <i class="fas fa-check-circle"></i> Effective
+                        </div>
+                        <p class="prompt-text">
+                            <span class="context-pill">@WORKSPACE</span>
+                            <span class="hl-action">Generate unit tests</span> for <span
+                                class="hl-scope">parseConfig()</span> covering empty, malformed, and missing-file cases.
+                            Use <span class="hl-constraint">Jest</span>, mock file system access, and avoid network I/O.
+                        </p>
+                    </div>
+                </div>
+                <!-- Row 3: Fixing -->
+                <div class="comparison-row">
+                    <!-- Bad -->
+                    <div class="prompt-card bad-card">
+                        <div class="card-label label-bad">
+                            <i class="fas fa-times-circle"></i> Ineffective
+                        </div>
+                        <p class="prompt-text text-gray-400 italic">"Fix this error"</p>
+                        <div class="mt-auto text-xs text-red-300 opacity-70">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> Lacks context
+                        </div>
+                    </div>
+                    <div class="arrow-divider">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <!-- Good -->
+                    <div class="prompt-card good-card">
+                        <div class="card-label label-good">
+                            <i class="fas fa-check-circle"></i> Effective
+                        </div>
+                        <p class="prompt-text">
+                            <span class="context-pill">/FIX</span>
+                            TypeError in <span class="hl-scope">userMapper.ts</span>: handle <span
+                                class="hl-constraint">null user.role</span> scenarios by returning default 'viewer'.
+                            Include diff and add one regression test case.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

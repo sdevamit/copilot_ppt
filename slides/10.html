@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Copilot Chat: Plan (Break Down Work)</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            /* GitHub Dark Dim */
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Grid Background Pattern using SVG to avoid gradient issues */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V30H30V1H1Z' fill='%2330363d' fill-opacity='0.2'/%3E%3C/svg%3E");
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* Glow effects using box-shadow */
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        .glow-purple {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(188, 140, 255, 0.08);
+            top: -100px;
+            right: -100px;
+        }
+
+        .glow-blue {
+            width: 300px;
+            height: 300px;
+            background-color: rgba(88, 166, 255, 0.08);
+            bottom: -50px;
+            left: -50px;
+        }
+
+        /* Card Styles */
+        .feature-card {
+            background-color: rgba(22, 27, 34, 0.8);
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .feature-card:hover {
+            border-color: #58a6ff;
+            transform: translateX(8px);
+            background-color: rgba(22, 27, 34, 0.95);
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background-color: #1f2428;
+            border: 1px solid #30363d;
+        }
+
+        /* Syntax Highlighting Colors */
+        .text-keyword {
+            color: #ff7b72;
+        }
+
+        .text-function {
+            color: #d2a8ff;
+        }
+
+        .text-string {
+            color: #a5d6ff;
+        }
+
+        .text-comment {
+            color: #8b949e;
+        }
+
+        .text-property {
+            color: #79c0ff;
+        }
+
+        /* Layout Utilities */
+        .content-area {
+            z-index: 10;
+            display: flex;
+            height: 100%;
+            padding: 64px 80px;
+        }
+
+        /* Plan Step Indicator */
+        .plan-step {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .plan-step::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #3fb950;
+        }
+
+        .plan-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 3px;
+            top: 20px;
+            width: 2px;
+            height: 24px;
+            background-color: #30363d;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Background -->
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-purple"></div>
+        <div class="glow-spot glow-blue"></div>
+        <!-- Main Content -->
+        <div class="content-area">
+            <!-- Left Column: Content -->
+            <div class="w-7/12 flex flex-col justify-center pr-12">
+                <!-- Header -->
+                <div class="mb-10">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i class="fab fa-github text-3xl text-white"></i>
+                        <span class="text-gray-400 text-lg font-medium tracking-wide">/ copilot / chat / plan</span>
+                    </div>
+                    <h1 class="text-5xl font-bold text-white mb-2 tracking-tight">Copilot Chat: Plan</h1>
+                    <h2 class="text-2xl text-green-400 font-light mono-font">&lt;Decompose_Complexity /&gt;</h2>
+                </div>
+                <!-- Bullet Points -->
+                <div class="space-y-4">
+                    <!-- Point 1 -->
+                    <div class="feature-card p-4 flex items-start space-x-5">
+                        <div class="icon-box shrink-0 text-yellow-400">
+                            <i class="fas fa-sitemap text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-1">Structural Decomposition</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Best for ambiguous tasks. Ask Copilot to break down large features into sequential,
+                                implementable steps with clear owners.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 2 -->
+                    <div class="feature-card p-4 flex items-start space-x-5">
+                        <div class="icon-box shrink-0 text-blue-400">
+                            <i class="fas fa-tasks text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-1">What to Ask For</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Request artifacts: migration checklists, dependency graphs, test strategies, rollback
+                                plans, and API schema changes.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 3 -->
+                    <div class="feature-card p-4 flex items-start space-x-5">
+                        <div class="icon-box shrink-0 text-purple-400">
+                            <i class="fas fa-search-plus text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-1">Example Prompt</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed mono-font">
+                                "Plan: Add cursor-based pagination to GET /users. Constraints: Postgres, &lt;200ms p95.
+                                Produce steps, schema changes &amp; rollout plan."
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 4 -->
+                    <div class="feature-card p-4 flex items-start space-x-5">
+                        <div class="icon-box shrink-0 text-green-400">
+                            <i class="fas fa-flag-checkered text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-1">Strategic Outcome</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Turns "unknowns" into a concrete roadmap. Use the output to generate PR descriptions or
+                                ticket requirements.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column: Visual Metaphor -->
+            <div class="w-5/12 flex flex-col justify-center items-center relative pl-8">
+                <!-- Planning Visual -->
+                <div class="w-full bg-gray-900 border border-gray-700 rounded-lg shadow-2xl overflow-hidden">
+                    <!-- Window Header -->
+                    <div class="bg-gray-800 px-4 py-2 border-b border-gray-700 flex items-center space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="ml-2 text-xs text-gray-400 font-mono">PLAN.md</span>
+                    </div>
+                    <!-- Code/Plan Content -->
+                    <div class="p-6 font-mono text-xs text-gray-300 leading-relaxed">
+                        <div class="mb-4">
+                            <span class="text-purple-400"># Implementation Plan: User Pagination</span>
+                        </div>
+                        <!-- Step 1 -->
+                        <div class="plan-step mb-3">
+                            <div class="flex justify-between">
+                                <span class="text-white font-bold">1. Database Migration</span>
+                                <span class="text-gray-500">[Pending]</span>
+                            </div>
+                            <p class="text-gray-500 ml-1 mt-1">- Add index on (created_at, id)</p>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="plan-step mb-3">
+                            <div class="flex justify-between">
+                                <span class="text-white font-bold">2. API Update</span>
+                                <span class="text-gray-500">[Pending]</span>
+                            </div>
+                            <p class="text-gray-500 ml-1 mt-1">- Update <span
+                                    class="text-property">UserService</span>.list()</p>
+                            <p class="text-gray-500 ml-1">- Validate cursor tokens</p>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="plan-step mb-3">
+                            <div class="flex justify-between">
+                                <span class="text-white font-bold">3. Testing Strategy</span>
+                                <span class="text-gray-500">[Pending]</span>
+                            </div>
+                            <p class="text-gray-500 ml-1 mt-1">- Unit: Boundary checks</p>
+                            <p class="text-gray-500 ml-1">- Load: Verify p95 &lt; 200ms</p>
+                        </div>
+                        <!-- Divider -->
+                        <div class="h-px bg-gray-700 my-4"></div>
+                        <div class="flex items-center space-x-2 text-blue-400">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Suggestion: Add a feature flag?</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Floating Badge -->
+                <div
+                    class="absolute -right-4 top-10 bg-gray-800 border border-purple-500 rounded-lg p-3 shadow-lg transform rotate-3">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-robot text-purple-400"></i>
+                        <span class="text-xs font-mono text-white">Analysis Complete</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

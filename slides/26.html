@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Copilot Hooks</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.25;
+        }
+
+        .glow-red {
+            width: 500px;
+            height: 500px;
+            background-color: #f78166;
+            top: -200px;
+            right: -100px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            z-index: 10;
+            padding: 36px 56px;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .text-column {
+            flex: 0 0 44%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #f78166;
+            border: 1px solid rgba(247, 129, 102, 0.3);
+            background-color: rgba(247, 129, 102, 0.08);
+            padding: 5px 14px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.12;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-family: 'JetBrains Mono', monospace;
+            color: #f78166;
+            font-size: 15px;
+            margin-bottom: 22px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .feature-item:hover {
+            background-color: rgba(48, 54, 61, 0.4);
+            border-color: rgba(48, 54, 61, 0.8);
+            transform: translateX(6px);
+        }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(247, 129, 102, 0.15);
+            color: #f78166;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .feature-title {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #e6edf3;
+            margin-bottom: 2px;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            color: #8b949e;
+            line-height: 1.5;
+        }
+
+        .code-column {
+            flex: 1;
+            height: 580px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mac-window {
+            width: 100%;
+            height: 100%;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .window-header {
+            background-color: #0d1117;
+            padding: 10px 16px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .red {
+            background-color: #ff5f56;
+        }
+
+        .yellow {
+            background-color: #ffbd2e;
+        }
+
+        .green {
+            background-color: #27c93f;
+        }
+
+        .tab-bar {
+            display: flex;
+            margin-left: 16px;
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        .tab {
+            padding: 4px 12px;
+            background-color: #161b22;
+            color: #e6edf3;
+            border-top: 2px solid #f78166;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-content {
+            padding: 18px 22px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.65;
+            color: #e6edf3;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .c-kw {
+            color: #ff7b72;
+        }
+
+        .c-fn {
+            color: #d2a8ff;
+        }
+
+        .c-str {
+            color: #a5d6ff;
+        }
+
+        .c-obj {
+            color: #ffa657;
+        }
+
+        .c-cmt {
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        .c-num {
+            color: #79c0ff;
+        }
+
+        .hook-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 10px;
+            border-radius: 6px;
+            background-color: rgba(247, 129, 102, 0.07);
+            border: 1px solid rgba(247, 129, 102, 0.2);
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+
+        .hook-name {
+            color: #f78166;
+            font-family: 'JetBrains Mono', monospace;
+            flex: 0 0 auto;
+            min-width: 220px;
+        }
+
+        .hook-desc {
+            color: #8b949e;
+        }
+
+        .section-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #8b949e;
+            margin: 12px 0 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-red"></div>
+        <div class="content-wrapper">
+            <!-- Left -->
+            <div class="text-column">
+                <div class="badge"><i class="fas fa-bolt"></i> Automation</div>
+                <h1>Hooks</h1>
+                <p class="tagline">// Shell commands at agent lifecycle points</p>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-cog text-sm"></i></div>
+                    <div>
+                        <p class="feature-title">Config: <code style="color:#f78166">.github/hooks/*.json</code></p>
+                        <p class="feature-desc">Declare hooks in JSON: <code
+                                style="color:#f78166">type: "command"</code> with a shell script path. VS Code
+                            auto-discovers files in <code style="color:#f78166">.github/hooks/</code>, <code
+                                style="color:#f78166">.claude/settings.json</code>, or <code
+                                style="color:#f78166">~/.claude/settings.json</code>.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-list-ol text-sm"></i></div>
+                    <div>
+                        <p class="feature-title">8 Lifecycle Events</p>
+                        <p class="feature-desc"><code style="color:#f78166">SessionStart</code>, <code
+                                style="color:#f78166">UserPromptSubmit</code>, <code
+                                style="color:#f78166">PreToolUse</code>, <code style="color:#f78166">PostToolUse</code>,
+                            <code style="color:#f78166">PreCompact</code>, <code
+                                style="color:#f78166">SubagentStart</code>, <code
+                                style="color:#f78166">SubagentStop</code>, <code style="color:#f78166">Stop</code> —
+                            each fires at the corresponding agent session stage.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-shield-alt text-sm"></i></div>
+                    <div>
+                        <p class="feature-title">Block via Exit Code or JSON Output</p>
+                        <p class="feature-desc">Exit <code style="color:#f78166">2</code> to block with error. Return
+                            JSON <code style="color:#f78166">{"{"}"permissionDecision": "deny"{"}"}</code> in <code
+                                style="color:#f78166">PreToolUse</code> to reject dangerous commands. Use <code
+                                style="color:#f78166">additionalContext</code> to inject guidance.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-terminal text-sm"></i></div>
+                    <div>
+                        <p class="feature-title">Configure with <code style="color:#f78166">/hooks</code> command</p>
+                        <p class="feature-desc">Type <code style="color:#f78166">/hooks</code> in Chat to open an
+                            interactive UI for selecting event types, adding entries, and opening config files in the
+                            editor.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Right -->
+            <div class="code-column">
+                <div class="mac-window">
+                    <div class="window-header">
+                        <div class="window-controls">
+                            <div class="control-dot red"></div>
+                            <div class="control-dot yellow"></div>
+                            <div class="control-dot green"></div>
+                        </div>
+                        <div class="tab-bar">
+                            <div class="tab"><i class="fas fa-shield-alt" style="font-size:11px;color:#f78166;"></i>
+                                .github/hooks/security.json</div>
+                        </div>
+                    </div>
+                    <div class="code-content">
+                        <span class="c-str">{</span>
+                        &nbsp;&nbsp;<span class="c-str">"hooks"</span>: {
+
+                        <span class="c-cmt">&nbsp;&nbsp;// Block rm -rf before it runs</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">"PreToolUse"</span>: [{
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">"type"</span>: <span
+                            class="c-str">"command"</span>,
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">"command"</span>: <span
+                            class="c-str">"./scripts/validate-tool.sh"</span>,
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">"timeout"</span>: <span
+                            class="c-num">10</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}],
+
+                        <span class="c-cmt">&nbsp;&nbsp;// Auto-format after every file edit</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">"PostToolUse"</span>: [{
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">"type"</span>: <span
+                            class="c-str">"command"</span>,
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">"command"</span>: <span
+                            class="c-str">"npx prettier --write \"$TOOL_INPUT_FILE_PATH\""</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}],
+
+                        <span class="c-cmt">&nbsp;&nbsp;// Inject project context at session start</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">"SessionStart"</span>: [{
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">"type"</span>: <span
+                            class="c-str">"command"</span>,
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">"command"</span>: <span
+                            class="c-str">"./scripts/inject-context.sh"</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}]
+                        &nbsp;&nbsp;}
+                        <span class="c-str">}</span>
+
+                        <div
+                            style="margin-top:10px;padding:8px 10px;background:rgba(247,129,102,0.07);border:1px solid rgba(247,129,102,0.2);border-radius:6px;font-size:11px;">
+                            <span style="color:#f78166;">PreToolUse fired</span> — tool: <span
+                                style="color:#a5d6ff;">runCommand</span> cmd: <span style="color:#ff7b72;">rm -rf
+                                /prod</span>
+                            <br><span style="color:#3fb950;">→</span> validate-tool.sh exits <span
+                                style="color:#ff7b72;">2</span> — <span style="color:#e6edf3;">Agent halted:
+                                "Destructive command blocked by policy"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

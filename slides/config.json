@@ -1,0 +1,106 @@
+{
+    "title": "Augmented Engineering: Mastering GitHub Copilot",
+    "author": "GitHub Copilot Presentation",
+    "slides": [
+        {
+            "file": "Index.html",
+            "title": "Title Slide"
+        },
+        {
+            "file": "1.html",
+            "title": "What is GitHub Copilot?"
+        },
+        {
+            "file": "17.html",
+            "title": "Workflow Integration: The Daily Coding Loop"
+        },
+        {
+            "file": "4.html",
+            "title": "Deep Dive: Copilot Modes in VS Code"
+        },
+        {
+            "file": "5.html",
+            "title": "Mode 1: Ghost Text (Autocomplete)"
+        },
+        {
+            "file": "11.html",
+            "title": "Mode 2: Inline Chat"
+        },
+        {
+            "file": "6.html",
+            "title": "Mode 3: Copilot Chat"
+        },
+        {
+            "file": "7.html",
+            "title": "Copilot Chat: Ask Mode"
+        },
+        {
+            "file": "9.html",
+            "title": "Copilot Chat: Agent Mode"
+        },
+        {
+            "file": "10.html",
+            "title": "Copilot Chat: Plan (Break Down Work)"
+        },
+        {
+            "file": "8.html",
+            "title": "Copilot Chat: Participants (@-Mentions)"
+        },
+        {
+            "file": "13.html",
+            "title": "Quick Reference: Agents & Slash Commands"
+        },
+        {
+            "file": "14.html",
+            "title": "The Art of Effective Prompting"
+        },
+        {
+            "file": "15.html",
+            "title": "Prompt Engineering Principles"
+        },
+        {
+            "file": "16.html",
+            "title": "Bad vs. Good Prompts"
+        },
+        {
+            "file": "27.html",
+            "title": "Context Rot: Keeping Your Chat Healthy"
+        },
+        {
+            "file": "18.html",
+            "title": "Security, Privacy & Responsible Use"
+        },
+        {
+            "file": "19.html",
+            "title": "Copilot Enterprise: Beyond Individual Productivity"
+        },
+        {
+            "file": "21.html",
+            "title": "Advanced Copilot Customization (Section)"
+        },
+        {
+            "file": "22.html",
+            "title": "Custom Agents (Chat Participants)"
+        },
+        {
+            "file": "23.html",
+            "title": "Custom Instructions"
+        },
+        {
+            "file": "24.html",
+            "title": "Prompt Files"
+        },
+        {
+            "file": "25.html",
+            "title": "Skills (Tools)"
+        },
+        {
+            "file": "26.html",
+            "title": "Hooks"
+        },
+        {
+            "file": "20.html",
+            "title": "Conclusion & Best Practices"
+        }
+    ]
+}

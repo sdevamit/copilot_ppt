@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Presentation Viewer</title>
+    <style>
+        /* ── Reset & base ──────────────────────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --muted: #8b949e;
+            --text: #e6edf3;
+            --blue: #58a6ff;
+            --green: #3fb950;
+            --bar-h: 52px;
+            --slide-w: 1280;
+            --slide-h: 720;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* ── Stage: area above the control bar ────────────────────────────────── */
+        #stage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: var(--bar-h);
+            overflow: hidden;
+            background: #060a0f;
+        }
+
+        /* ── Slide host: a 1280×720 box that gets CSS-scaled ───────────────────── */
+        #slide-host {
+            position: absolute;
+            width: 1280px;
+            height: 720px;
+            /* transform and top/left set by JS to keep it perfectly centred */
+            transform-origin: top left;
+            box-shadow: 0 8px 48px #000a;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #0d1117;
+        }
+
+        #slide-frame {
+            width: 1280px;
+            height: 720px;
+            border: none;
+            display: block;
+        }
+
+        /* ── Control bar ───────────────────────────────────────────────────────── */
+        #bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--bar-h);
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            gap: 12px;
+            z-index: 200;
+        }
+
+        .bar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* slide title in bar */
+        #bar-title {
+            font-size: 13px;
+            color: var(--muted);
+            max-width: 360px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* counter */
+        #counter {
+            font-size: 13px;
+            color: var(--text);
+            min-width: 52px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* progress bar */
+        #progress-track {
+            width: 140px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        #progress-fill {
+            height: 100%;
+            background: var(--blue);
+            border-radius: 2px;
+            transition: width 0.25s ease;
+        }
+
+        /* icon buttons */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+
+        .btn:hover {
+            background: #21262d;
+            border-color: #6e7681;
+        }
+
+        .btn.active {
+            background: #1f3a5f;
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        /* nav buttons are slightly wider */
+        .btn-nav {
+            width: 40px;
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+
+        .btn-nav:disabled:hover {
+            background: transparent;
+            border-color: var(--border);
+        }
+
+        /* ── Overview overlay ──────────────────────────────────────────────────── */
+        #overview {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(1, 4, 9, 0.95);
+            z-index: 300;
+            overflow-y: auto;
+            padding: 28px 28px 80px;
+        }
+
+        #overview.visible {
+            display: block;
+        }
+
+        #overview-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 20px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        #overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .thumb-card {
+            position: relative;
+            cursor: pointer;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            overflow: hidden;
+            transition: border-color 0.15s, transform 0.15s;
+            background: #080d13;
+        }
+
+        .thumb-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
+        }
+
+        .thumb-card.active {
+            border-color: var(--green);
+        }
+
+        /* iframe thumbnail: scale a 1280×720 iframe down to 216×121.5 */
+        .thumb-wrap {
+            position: relative;
+            width: 216px;
+            height: 121.5px;
+            overflow: hidden;
+        }
+
+        .thumb-wrap iframe {
+            width: 1280px;
+            height: 720px;
+            border: none;
+            transform: scale(0.169);
+            /* 216/1280 ≈ 0.169 */
+            transform-origin: top left;
+            pointer-events: none;
+        }
+
+        .thumb-label {
+            padding: 6px 8px;
+            font-size: 11px;
+            color: var(--muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .thumb-num {
+            position: absolute;
+            top: 5px;
+            left: 7px;
+            font-size: 10px;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.65);
+            color: var(--text);
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+
+        .thumb-card.active .thumb-label {
+            color: var(--green);
+        }
+
+        /* close overview hint */
+        #overview-close-hint {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--muted);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 6px 16px;
+            border-radius: 20px;
+            z-index: 310;
+            display: none;
+        }
+
+        /* ── Loading state ─────────────────────────────────────────────────────── */
+        #loading {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: var(--bg);
+            z-index: 400;
+            transition: opacity 0.4s;
+        }
+
+        #loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Slide transition flash ────────────────────────────────────────────── */
+        #slide-host::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--bg);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s;
+            z-index: 10;
+        }
+
+        #slide-host.transitioning::after {
+            opacity: 1;
+        }
+
+        /* ── Keyboard hint toast ───────────────────────────────────────────────── */
+        #hint-toast {
+            position: fixed;
+            bottom: calc(var(--bar-h) + 16px);
+            left: 50%;
+            transform: translateX(-50%) translateY(12px);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 12px;
+            color: var(--muted);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s, transform 0.25s;
+            white-space: nowrap;
+            z-index: 250;
+        }
+
+        #hint-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #hint-toast kbd {
+            display: inline-block;
+            background: #21262d;
+            border: 1px solid #6e7681;
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-size: 11px;
+            color: var(--text);
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Loading screen -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <div style="font-size:14px;color:var(--muted)">Loading presentation…</div>
+    </div>
+
+    <!-- Main stage -->
+    <div id="stage">
+        <div id="slide-host">
+            <iframe id="slide-frame" src="about:blank" title="Slide"></iframe>
+        </div>
+    </div>
+
+    <!-- Control bar -->
+    <div id="bar">
+        <!-- Left: title -->
+        <div class="bar-group" style="flex:1;min-width:0;">
+            <span style="font-size:13px;color:var(--blue);font-weight:600;flex-shrink:0;">⬡</span>
+            <span id="bar-title">Loading…</span>
+        </div>
+
+        <!-- Centre: nav + counter + progress -->
+        <div class="bar-group">
+            <button class="btn btn-nav" id="btn-prev" title="Previous slide (←)" disabled>&#8249;</button>
+            <span id="counter">– / –</span>
+            <button class="btn btn-nav" id="btn-next" title="Next slide (→)" disabled>&#8250;</button>
+            <div id="progress-track">
+                <div id="progress-fill" style="width:0%"></div>
+            </div>
+        </div>
+
+        <!-- Right: overview + fullscreen -->
+        <div class="bar-group" style="justify-content:flex-end;flex:1;">
+            <button class="btn" id="btn-overview" title="Slide overview (G)">
+                <!-- grid icon -->
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                    <rect x="1" y="1" width="6" height="6" rx="1" />
+                    <rect x="9" y="1" width="6" height="6" rx="1" />
+                    <rect x="1" y="9" width="6" height="6" rx="1" />
+                    <rect x="9" y="9" width="6" height="6" rx="1" />
+                </svg>
+            </button>
+            <button class="btn" id="btn-fs" title="Fullscreen (F)">
+                <!-- expand icon -->
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                    <path
+                        d="M1.5 1h4v1.5h-2.5v2.5h-1.5v-4zm9 0h4v4h-1.5v-2.5h-2.5v-1.5zm-9 9h1.5v2.5h2.5v1.5h-4v-4zm10.5 2.5v-2.5h1.5v4h-4v-1.5h2.5z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Slide overview overlay -->
+    <div id="overview">
+        <div id="overview-title">Slide Overview — click to jump</div>
+        <div id="overview-grid"></div>
+    </div>
+    <div id="overview-close-hint">Press <kbd>G</kbd> or <kbd>Esc</kbd> to close overview</div>
+
+    <!-- Keyboard hint toast -->
+    <div id="hint-toast"></div>
+
+    <script>
+        (() => {
+            // ── State ────────────────────────────────────────────────────────────────
+            let slides = [];   // array of { file, title }
+            let current = 0;   // 0-based index
+            let overview = false;
+            let thumbsLoaded = false;
+
+            // ── DOM refs ─────────────────────────────────────────────────────────────
+            const stage = document.getElementById('stage');
+            const slideHost = document.getElementById('slide-host');
+            const slideFrame = document.getElementById('slide-frame');
+            const loadingEl = document.getElementById('loading');
+            const barTitle = document.getElementById('bar-title');
+            const counter = document.getElementById('counter');
+            const progFill = document.getElementById('progress-fill');
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const btnOverview = document.getElementById('btn-overview');
+            const btnFs = document.getElementById('btn-fs');
+            const overviewEl = document.getElementById('overview');
+            const overviewGrid = document.getElementById('overview-grid');
+
+            // ── Scale slide to fit stage ─────────────────────────────────────────────
+            function scaleSlide() {
+                const W = stage.clientWidth;
+                const H = stage.clientHeight;
+                // Add a small padding so the slide never touches the edges
+                const padding = 16;
+                const scale = Math.min((W - padding * 2) / 1280, (H - padding * 2) / 720);
+                // Centre the 1280×720 origin-top-left element inside the stage
+                const offsetX = (W - 1280 * scale) / 2;
+                const offsetY = (H - 720 * scale) / 2;
+                slideHost.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+                slideHost.style.top = '0';
+                slideHost.style.left = '0';
+            }
+
+            // ── Navigate to a slide (0-based) ────────────────────────────────────────
+            function goTo(idx, opts = {}) {
+                if (idx < 0 || idx >= slides.length) return;
+                const wasLoaded = !slideFrame.src.endsWith('about:blank');
+
+                // Flash transition if changing slide (not first load)
+                if (wasLoaded && !opts.instant) {
+                    slideHost.classList.add('transitioning');
+                    setTimeout(doLoad, 120);
+                } else {
+                    doLoad();
+                }
+
+                function doLoad() {
+                    current = idx;
+                    slideFrame.src = '/' + slides[idx].file;
+                    slideHost.classList.remove('transitioning');
+                    updateBar();
+                    updateOverviewActive();
+                }
+            }
+
+            // ── Update bar UI ────────────────────────────────────────────────────────
+            function updateBar() {
+                const s = slides[current];
+                barTitle.textContent = `${current + 1}. ${s.title}`;
+                counter.textContent = `${current + 1} / ${slides.length}`;
+                progFill.style.width = `${((current + 1) / slides.length) * 100}%`;
+                btnPrev.disabled = current === 0;
+                btnNext.disabled = current === slides.length - 1;
+                document.title = `${s.title} — Presenter`;
+            }
+
+            // ── Toggle overview ──────────────────────────────────────────────────────
+            const closeHintEl = document.getElementById('overview-close-hint');
+            let overviewHintShown = false;
+
+            function openOverview() {
+                overview = true;
+                overviewEl.classList.add('visible');
+                btnOverview.classList.add('active');
+                if (!overviewHintShown) {
+                    closeHintEl.style.display = '';
+                }
+
+                // Lazy-build thumbnails once
+                if (!thumbsLoaded) buildThumbs();
+                else updateOverviewActive();
+            }
+
+            function closeOverview() {
+                overview = false;
+                overviewEl.classList.remove('visible');
+                btnOverview.classList.remove('active');
+                // Hide hint and mark as shown so it never appears again
+                closeHintEl.style.display = 'none';
+                overviewHintShown = true;
+            }
+
+            function toggleOverview() {
+                overview ? closeOverview() : openOverview();
+            }
+
+            function buildThumbs() {
+                overviewGrid.innerHTML = '';
+                slides.forEach((s, i) => {
+                    const card = document.createElement('div');
+                    card.className = 'thumb-card' + (i === current ? ' active' : '');
+                    card.dataset.idx = i;
+
+                    card.innerHTML = `
+        <div class="thumb-wrap">
+          <iframe src="/${s.file}" tabindex="-1" title="${s.title}"></iframe>
+        </div>
+        <span class="thumb-num">${i + 1}</span>
+        <div class="thumb-label">${s.title}</div>
+      `;
+
+                    card.addEventListener('click', () => {
+                        closeOverview();
+                        goTo(i);
+                    });
+                    overviewGrid.appendChild(card);
+                });
+                thumbsLoaded = true;
+            }
+
+            function updateOverviewActive() {
+                if (!thumbsLoaded) return;
+                overviewGrid.querySelectorAll('.thumb-card').forEach((c, i) => {
+                    c.classList.toggle('active', i === current);
+                });
+            }
+
+            // ── Fullscreen ───────────────────────────────────────────────────────────
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => { });
+                } else {
+                    document.exitFullscreen().catch(() => { });
+                }
+            }
+
+            document.addEventListener('fullscreenchange', () => {
+                const isFull = !!document.fullscreenElement;
+                btnFs.classList.toggle('active', isFull);
+                // Hide/show bar in fullscreen (optional — keep visible)
+                scaleSlide();
+            });
+
+            // ── Toast helper ─────────────────────────────────────────────────────────
+            let toastTimer;
+            function showToast(html) {
+                const t = document.getElementById('hint-toast');
+                t.innerHTML = html;
+                t.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+            }
+
+            // ── Keyboard ─────────────────────────────────────────────────────────────
+            document.addEventListener('keydown', (e) => {
+                // Don't interfere with inputs
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+                if (overview) {
+                    if (e.key === 'Escape' || e.key === 'g' || e.key === 'G') {
+                        closeOverview(); e.preventDefault();
+                    }
+                    return;
+                }
+
+                switch (e.key) {
+                    case 'ArrowRight':
+                    case 'ArrowDown':
+                    case 'PageDown':
+                    case ' ':
+                        if (current < slides.length - 1) goTo(current + 1);
+                        e.preventDefault();
+                        break;
+                    case 'ArrowLeft':
+                    case 'ArrowUp':
+                    case 'PageUp':
+                        if (current > 0) goTo(current - 1);
+                        e.preventDefault();
+                        break;
+                    case 'Home':
+                        goTo(0); e.preventDefault();
+                        break;
+                    case 'End':
+                        goTo(slides.length - 1); e.preventDefault();
+                        break;
+                    case 'f':
+                    case 'F':
+                        toggleFullscreen(); e.preventDefault();
+                        break;
+                    case 'g':
+                    case 'G':
+                        openOverview(); e.preventDefault();
+                        break;
+                    case '?':
+                        showToast(
+                            '<kbd>←</kbd><kbd>→</kbd> navigate &nbsp;|&nbsp; ' +
+                            '<kbd>G</kbd> overview &nbsp;|&nbsp; ' +
+                            '<kbd>F</kbd> fullscreen &nbsp;|&nbsp; ' +
+                            '<kbd>Home</kbd>/<kbd>End</kbd> first/last'
+                        );
+                        break;
+                }
+            });
+
+            // ── Button wiring ────────────────────────────────────────────────────────
+            btnPrev.addEventListener('click', () => goTo(current - 1));
+            btnNext.addEventListener('click', () => goTo(current + 1));
+            btnOverview.addEventListener('click', toggleOverview);
+            btnFs.addEventListener('click', toggleFullscreen);
+
+            // Close overview when clicking backdrop (not a card)
+            overviewEl.addEventListener('click', (e) => {
+                if (e.target === overviewEl) closeOverview();
+            });
+
+            // ── Resize ───────────────────────────────────────────────────────────────
+            const ro = new ResizeObserver(scaleSlide);
+            ro.observe(stage);
+
+            // ── Initialise: fetch config then start ──────────────────────────────────
+            fetch('/api/config')
+                .then(r => {
+                    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                    return r.json();
+                })
+                .then(cfg => {
+                    if (!cfg.slides || !cfg.slides.length) throw new Error('No slides in config.json');
+                    slides = cfg.slides;
+
+                    // Set page title
+                    document.title = cfg.title || 'Presentation Viewer';
+
+                    // Show first slide
+                    goTo(0, { instant: true });
+
+                    // Wait for iframe to load then hide spinner
+                    slideFrame.addEventListener('load', () => {
+                        loadingEl.classList.add('hidden');
+                        setTimeout(() => loadingEl.remove(), 500);
+                    }, { once: true });
+
+                    // Hint toast after 1s — show only once per browser session
+                    if (!sessionStorage.getItem('copilot-hint-shown')) {
+                        sessionStorage.setItem('copilot-hint-shown', '1');
+                        setTimeout(() => showToast(
+                            'Press <kbd>?</kbd> for keyboard shortcuts &nbsp;·&nbsp; <kbd>G</kbd> for overview'
+                        ), 1200);
+                    }
+                })
+                .catch(err => {
+                    loadingEl.querySelector('div:last-child').textContent = 'Error: ' + err.message;
+                    loadingEl.querySelector('.spinner').style.borderTopColor = '#f85149';
+                });
+        })();
+    </script>
+</body>
+
+</html>

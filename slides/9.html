@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Copilot Chat: Agent Mode</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            /* GitHub Dark Dim */
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Background Pattern */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        /* Gradient Glows */
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .glow-blue {
+            width: 500px;
+            height: 500px;
+            background-color: #388bfd;
+            top: -200px;
+            right: -100px;
+        }
+
+        /* Layout */
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            z-index: 10;
+            padding: 40px 60px;
+            gap: 40px;
+            align-items: center;
+        }
+
+        /* Left Column: Text Content */
+        .text-column {
+            flex: 0 0 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 24px;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background-color: rgba(48, 54, 61, 0.4);
+            border-color: rgba(48, 54, 61, 0.8);
+            transform: translateX(10px);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(56, 139, 253, 0.15);
+            color: #58a6ff;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        /* Right Column: Code Window */
+        .code-column {
+            flex: 1;
+            height: 580px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mac-window {
+            width: 100%;
+            height: 100%;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .window-header {
+            background-color: #0d1117;
+            padding: 12px 16px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .red {
+            background-color: #ff5f56;
+        }
+
+        .yellow {
+            background-color: #ffbd2e;
+        }
+
+        .green {
+            background-color: #27c93f;
+        }
+
+        .tab-bar {
+            display: flex;
+            margin-left: 16px;
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        .tab {
+            padding: 4px 12px;
+            background-color: #161b22;
+            color: #e6edf3;
+            border-top: 2px solid #58a6ff;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-content {
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #e6edf3;
+            overflow-y: hidden;
+            position: relative;
+            flex: 1;
+        }
+
+        /* Chat Interface Styles */
+        .chat-interface {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-message {
+            margin-bottom: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .user-message {
+            background-color: rgba(56, 139, 253, 0.1);
+            border: 1px solid rgba(56, 139, 253, 0.2);
+            align-self: flex-end;
+            margin-left: 20%;
+        }
+
+        .copilot-message {
+            background-color: rgba(48, 54, 61, 0.4);
+            border: 1px solid rgba(48, 54, 61, 0.6);
+            margin-right: 5%;
+        }
+
+        .diff-view {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .diff-header {
+            background-color: #161b22;
+            padding: 6px 12px;
+            font-size: 11px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            color: #8b949e;
+        }
+
+        .diff-content {
+            padding: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .diff-line {
+            display: block;
+        }
+
+        .diff-del {
+            background-color: rgba(248, 81, 73, 0.15);
+            color: #e6edf3;
+        }
+
+        .diff-add {
+            background-color: rgba(46, 160, 67, 0.15);
+            color: #e6edf3;
+        }
+
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 8px;
+            cursor: pointer;
+            border: 1px solid rgba(56, 139, 253, 0.5);
+            background-color: rgba(56, 139, 253, 0.1);
+            color: #58a6ff;
+        }
+
+        /* Syntax Highlighting */
+        .kwd {
+            color: #ff7b72;
+        }
+
+        .fn {
+            color: #d2a8ff;
+        }
+
+        .str {
+            color: #a5d6ff;
+        }
+
+        .num {
+            color: #79c0ff;
+        }
+
+        .cls {
+            color: #ffa657;
+        }
+
+        .cmt {
+            color: #8b949e;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Background -->
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-blue" style="background-color:#f0883e;opacity:0.2;"></div>
+        <div class="content-wrapper">
+            <!-- Left Column -->
+            <div class="text-column">
+                <div class="mb-8">
+                    <h2 class="text-sm font-bold tracking-widest uppercase mb-2" style="color:#f0883e;">Copilot Chat
+                    </h2>
+                    <h1 class="text-4xl font-bold text-white mb-2">Agent Mode: <span style="color:#f0883e;">Autonomous
+                            Execution</span></h1>
+                    <p class="text-gray-400 text-lg">Select <strong class="text-white">Agent</strong> in the chat panel
+                        &mdash; Copilot plans, implements, and runs commands without hand-holding.</p>
+                </div>
+                <!-- Feature 1 -->
+                <div class="feature-item">
+                    <div class="feature-icon" style="background-color: rgba(240, 136, 62, 0.15); color: #f0883e;">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Autonomous Planning &amp; Implementation</h3>
+                        <p class="text-gray-400 text-sm">Give a high-level goal. Copilot creates a plan and executes
+                            each step: creates files, edits code, wires dependencies.</p>
+                    </div>
+                </div>
+                <!-- Feature 2 -->
+                <div class="feature-item">
+                    <div class="feature-icon" style="background-color: rgba(56, 139, 253, 0.15); color: #58a6ff;">
+                        <i class="fas fa-terminal"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Terminal Command Execution</h3>
+                        <p class="text-gray-400 text-sm">Runs build, install, test, and migration commands in the
+                            integrated terminal. Reads output and self-corrects on errors.</p>
+                    </div>
+                </div>
+                <!-- Feature 3 -->
+                <div class="feature-item">
+                    <div class="feature-icon" style="background-color: rgba(46, 160, 67, 0.15); color: #3fb950;">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Review at Every Step</h3>
+                        <p class="text-gray-400 text-sm">Every file edit is shown as a reviewable diff. Interrupt, undo,
+                            or redirect Copilot mid-task at any checkpoint.</p>
+                    </div>
+                </div>
+                <!-- Feature 4 -->
+                <div class="feature-item">
+                    <div class="feature-icon" style="background-color: rgba(210, 168, 255, 0.15); color: #d2a8ff;">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Tool &amp; MCP Invocations</h3>
+                        <p class="text-gray-400 text-sm">Agent can invoke MCP tools (search, fetch, database) and VS
+                            Code extensions to gather context beyond the codebase.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column -->
+            <div class="code-column">
+                <div class="mac-window">
+                    <div class="window-header">
+                        <div class="window-controls">
+                            <div class="control-dot red"></div>
+                            <div class="control-dot yellow"></div>
+                            <div class="control-dot green"></div>
+                        </div>
+                        <div class="tab-bar">
+                            <div class="tab"><i class="fas fa-bolt text-xs mr-2" style="color:#f0883e;"></i> Copilot
+                                Chat &ndash; Agent</div>
+                        </div>
+                    </div>
+                    <div class="code-content">
+                        <div class="chat-interface">
+                            <!-- User Request -->
+                            <div class="chat-message user-message">
+                                <p class="mb-1"><strong><i class="fas fa-user-circle mr-1"></i> You (Agent
+                                        mode)</strong></p>
+                                <p class="text-gray-300">Add JWT authentication to the Express app: create middleware,
+                                    protect <span
+                                        class="text-orange-300 font-mono text-xs bg-gray-800 px-1 rounded">/api</span>
+                                    routes, and write tests.</p>
+                            </div>
+                            <!-- Copilot Response -->
+                            <div class="chat-message copilot-message">
+                                <p class="mb-2"><strong><i class="fas fa-robot mr-1"></i> Copilot</strong></p>
+                                <p class="text-gray-400 text-xs mb-2 uppercase tracking-wide font-semibold">Executing
+                                    plan:</p>
+                                <ul class="list-none text-gray-300 text-xs mb-3 space-y-1">
+                                    <li><span class="text-green-400 mr-1">&#10003;</span>
+                                        <code>npm install jsonwebtoken bcryptjs</code></li>
+                                    <li><span class="text-green-400 mr-1">&#10003;</span> Created
+                                        <code>src/middleware/auth.ts</code></li>
+                                    <li><span class="text-yellow-400 mr-1">&rarr;</span> Updating
+                                        <code>src/routes/api.ts</code></li>
+                                    <li><span class="text-gray-500 mr-1">&#9675;</span> Write Jest tests for token
+                                        validation</li>
+                                </ul>
+                                <!-- Diff Preview -->
+                                <div class="diff-view">
+                                    <div class="diff-header">
+                                        <span>src/middleware/auth.ts</span>
+                                        <span><i class="fas fa-file-code"></i> new file</span>
+                                    </div>
+                                    <div class="diff-content">
+                                        <span class="diff-line diff-add">+ import jwt from 'jsonwebtoken';</span>
+                                        <span class="diff-line diff-add">+ export const verifyToken = (req, res, next)
+                                            =&gt; {</span>
+                                        <span class="diff-line diff-add">+ const token =
+                                            req.headers.authorization?.split(' ')[1];</span>
+                                        <span class="diff-line diff-add">+ if (!token) return
+                                            res.status(401).json({error:'Unauthorized'});</span>
+                                        <span class="diff-line diff-add">+ req.user = jwt.verify(token,
+                                            process.env.JWT_SECRET);</span>
+                                        <span class="diff-line diff-add">+ next();</span>
+                                        <span class="diff-line diff-add">+ };</span>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2 mt-2">
+                                    <button class="action-button"
+                                        style="border-color:rgba(240,136,62,0.5);background-color:rgba(240,136,62,0.1);color:#f0883e;"><i
+                                            class="fas fa-check mr-2"></i> Keep &amp; Continue</button>
+                                    <button class="action-button border-gray-600 text-gray-400 bg-transparent"><i
+                                            class="fas fa-stop mr-2"></i> Stop</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

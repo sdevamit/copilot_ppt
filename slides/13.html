@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1280" />
+    <title>Agents &amp; Slash Commands Quick Reference</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com/2.2.19"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 1280px;
+            height: 720px;
+            overflow: hidden;
+            background: #0d1117;
+            font-family: 'Inter', sans-serif;
+            color: #e6edf3;
+        }
+
+        .slide {
+            width: 1280px;
+            height: 720px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .slide-header {
+            background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+            border-bottom: 1px solid #30363d;
+            padding: 16px 56px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .slide-number {
+            background: #1f6feb;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .slide-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #e6edf3;
+        }
+
+        .slide-subtitle {
+            font-size: 13px;
+            color: #8b949e;
+            margin-left: auto;
+        }
+
+        /* Content */
+        .content-area {
+            flex: 1;
+            padding: 20px 44px 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Column */
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* Section title */
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #8b949e;
+            border-bottom: 1px solid #21262d;
+            padding-bottom: 6px;
+        }
+
+        /* Agent row */
+        .agent-table {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .agent-row {
+            display: grid;
+            grid-template-columns: 34px 120px 1fr;
+            align-items: start;
+            gap: 10px;
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 8px;
+            padding: 8px 12px;
+            transition: border-color .2s;
+        }
+
+        .agent-row:hover {
+            border-color: #30363d;
+        }
+
+        .agent-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .agent-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #79c0ff;
+            padding-top: 2px;
+        }
+
+        .agent-desc {
+            font-size: 12px;
+            color: #8b949e;
+            line-height: 1.4;
+            padding-top: 2px;
+        }
+
+        /* Slash command table */
+        .cmd-table {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .cmd-row {
+            display: grid;
+            grid-template-columns: 148px 1fr;
+            align-items: start;
+            gap: 10px;
+            padding: 7px 12px;
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 7px;
+        }
+
+        .cmd-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffa657;
+        }
+
+        .cmd-desc {
+            font-size: 12px;
+            color: #8b949e;
+            line-height: 1.4;
+        }
+
+        /* Chat vars */
+        .var-table {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .var-row {
+            display: grid;
+            grid-template-columns: 130px 1fr;
+            align-items: start;
+            gap: 10px;
+            padding: 7px 12px;
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 7px;
+        }
+
+        .var-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #56d364;
+        }
+
+        .var-desc {
+            font-size: 12px;
+            color: #8b949e;
+            line-height: 1.4;
+        }
+
+        /* Tip bar */
+        .tip-bar {
+            margin: 0 44px 14px;
+            background: #161b22;
+            border: 1px solid #1f6feb44;
+            border-radius: 8px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .tip-icon {
+            color: #1f6feb;
+            font-size: 16px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .tip-text {
+            font-size: 12px;
+            color: #8b949e;
+            line-height: 1.5;
+        }
+
+        .tip-text strong {
+            color: #79c0ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+        <!-- Header -->
+        <div class="slide-header">
+            <span class="slide-number">13 / 20</span>
+            <span class="slide-title"><i class="fa-solid fa-book-open-reader"
+                    style="color:#1f6feb;margin-right:10px"></i>Quick Reference: Agents &amp; Slash Commands</span>
+            <span class="slide-subtitle">Your cheat sheet for Copilot Chat</span>
+        </div>
+
+        <!-- Content grid -->
+        <div class="content-area">
+            <!-- LEFT: Agents + Chat Variables -->
+            <div class="col">
+                <!-- Agents -->
+                <p class="section-label">Built-in Agents <span
+                        style="color:#3fb950;font-size:10px;letter-spacing:.5px">(@ prefix)</span></p>
+                <div class="agent-table">
+                    <div class="agent-row">
+                        <div class="agent-icon" style="background:#1f3a5f"><i class="fa-solid fa-code"
+                                style="color:#79c0ff"></i></div>
+                        <span class="agent-name">@workspace</span>
+                        <span class="agent-desc">Searches your workspace using retrieval to surface relevant files,
+                            symbols, and structure. Context is retrieved — not the entire repo loaded at once.</span>
+                    </div>
+                    <div class="agent-row">
+                        <div class="agent-icon" style="background:#1a3a1a"><i class="fa-solid fa-cube"
+                                style="color:#56d364"></i></div>
+                        <span class="agent-name">@vscode</span>
+                        <span class="agent-desc">Answers questions about VS Code settings, commands, extensions, and
+                            keyboard shortcuts.</span>
+                    </div>
+                    <div class="agent-row">
+                        <div class="agent-icon" style="background:#3a2a1a"><i class="fa-solid fa-terminal"
+                                style="color:#ffa657"></i></div>
+                        <span class="agent-name">@terminal</span>
+                        <span class="agent-desc">Generates shell commands based on your current terminal context and
+                            OS.</span>
+                    </div>
+                    <div class="agent-row">
+                        <div class="agent-icon" style="background:#2a1a3a"><i class="fa-solid fa-robot"
+                                style="color:#d2a8ff"></i></div>
+                        <span class="agent-name">@github</span>
+                        <span class="agent-desc">Optional — availability depends on enabled integrations. Provides
+                            GitHub-aware Q&amp;A (issues, PRs, repos) in supported setups.</span>
+                    </div>
+                </div>
+
+                <!-- Chat Variables -->
+                <p class="section-label" style="margin-top:4px">Chat Variables <span
+                        style="color:#3fb950;font-size:10px;letter-spacing:.5px">(# prefix)</span></p>
+                <div class="var-table">
+                    <div class="var-row"><span class="var-name">#file</span><span class="var-desc">Attach a specific
+                            file to your question for targeted analysis.</span></div>
+                    <div class="var-row"><span class="var-name">#selection</span><span class="var-desc">Automatically
+                            includes the current editor selection as context.</span></div>
+                    <div class="var-row"><span class="var-name">#codebase</span><span class="var-desc">Tells Copilot to
+                            search the full codebase for relevant context.</span></div>
+                    <div class="var-row"><span class="var-name">#terminalSelection</span><span class="var-desc">Passes
+                            the currently selected terminal output as context.</span></div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Slash Commands -->
+            <div class="col">
+                <p class="section-label">Slash Commands <span
+                        style="color:#3fb950;font-size:10px;letter-spacing:.5px">(/ prefix)</span></p>
+                <div class="cmd-table">
+                    <div class="cmd-row"><span class="cmd-name">/explain</span><span class="cmd-desc">Walk through
+                            selected code step-by-step — great for unfamiliar legacy code.</span></div>
+                    <div class="cmd-row"><span class="cmd-name">/fix</span><span class="cmd-desc">Identify and resolve
+                            bugs, logic errors, or compile issues in selected code.</span></div>
+                    <div class="cmd-row"><span class="cmd-name">/tests</span><span class="cmd-desc">Generate unit tests
+                            for the selected function or class, matching your testing framework.</span></div>
+                    <div class="cmd-row"><span class="cmd-name">/doc</span><span class="cmd-desc">Add JSDoc, docstrings,
+                            or inline comments to undocumented code.</span></div>
+                    <div class="cmd-row"><span class="cmd-name">/optimize</span><span class="cmd-desc">Suggest
+                            performance improvements to selected code. <span style="color:#6e7681;font-size:11px">(may
+                                vary by version)</span></span></div>
+                    <div class="cmd-row"><span class="cmd-name">/new</span><span class="cmd-desc">Scaffold a new
+                            project, file, or component. <span style="color:#6e7681;font-size:11px">(may vary by
+                                version)</span></span></div>
+                    <div class="cmd-row"><span class="cmd-name">/newNotebook</span><span class="cmd-desc">Create a
+                            Jupyter notebook from a prompt. <span style="color:#6e7681;font-size:11px">(may vary by
+                                version)</span></span></div>
+                    <div class="cmd-row"><span class="cmd-name">/setupTests</span><span class="cmd-desc">Configure a
+                            test framework (Jest, Pytest, Vitest…). <span style="color:#6e7681;font-size:11px">(may vary
+                                by version)</span></span></div>
+                    <div class="cmd-row"><span class="cmd-name">/search</span><span class="cmd-desc">Natural-language
+                            workspace search via <code style="font-size:11px;color:#ffa657">@workspace</code>. <span
+                                style="color:#6e7681;font-size:11px">(may vary by version)</span></span></div>
+                    <div class="cmd-row"><span class="cmd-name">/clear</span><span class="cmd-desc">Start a fresh chat
+                            session, removing prior conversation context.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tip bar -->
+        <div class="tip-bar">
+            <i class="fa-solid fa-lightbulb tip-icon"></i>
+            <p class="tip-text">
+                <strong>Pro tip:</strong> Combine agents, variables, and slash commands for maximum precision.
+                Example: <strong style="color:#ffa657;font-family:'JetBrains Mono',monospace;font-size:11px">@workspace
+                    /fix #file:auth.ts</strong> — Copilot searches the whole codebase to understand context, then
+                applies a targeted fix to <em>auth.ts</em> only.
+                &nbsp;|&nbsp; Use <strong style="color:#56d364">Tab</strong> to autocomplete agents and slash commands
+                in the chat input box.
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

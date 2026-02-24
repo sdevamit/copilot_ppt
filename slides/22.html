@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Custom Agents (Chat Participants)</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.25;
+        }
+
+        .glow-orange {
+            width: 500px;
+            height: 500px;
+            background-color: #d29922;
+            top: -200px;
+            right: -100px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            z-index: 10;
+            padding: 36px 56px;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .text-column {
+            flex: 0 0 46%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #d29922;
+            border: 1px solid rgba(210, 153, 34, 0.3);
+            background-color: rgba(210, 153, 34, 0.08);
+            padding: 5px 14px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.12;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-family: 'JetBrains Mono', monospace;
+            color: #d29922;
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 18px;
+            padding: 13px 16px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .feature-item:hover {
+            background-color: rgba(48, 54, 61, 0.4);
+            border-color: rgba(48, 54, 61, 0.8);
+            transform: translateX(6px);
+        }
+
+        .feature-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(210, 153, 34, 0.15);
+            color: #d29922;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e6edf3;
+            margin-bottom: 2px;
+        }
+
+        .feature-desc {
+            font-size: 12.5px;
+            color: #8b949e;
+            line-height: 1.5;
+        }
+
+        .code-column {
+            flex: 1;
+            height: 580px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mac-window {
+            width: 100%;
+            height: 100%;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .window-header {
+            background-color: #0d1117;
+            padding: 10px 16px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .red {
+            background-color: #ff5f56;
+        }
+
+        .yellow {
+            background-color: #ffbd2e;
+        }
+
+        .green {
+            background-color: #27c93f;
+        }
+
+        .tab-bar {
+            display: flex;
+            margin-left: 16px;
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        .tab {
+            padding: 4px 12px;
+            background-color: #161b22;
+            color: #e6edf3;
+            border-top: 2px solid #d29922;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-content {
+            padding: 20px 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.65;
+            color: #e6edf3;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .c-kw {
+            color: #ff7b72;
+        }
+
+        .c-fn {
+            color: #d2a8ff;
+        }
+
+        .c-str {
+            color: #a5d6ff;
+        }
+
+        .c-obj {
+            color: #ffa657;
+        }
+
+        .c-cmt {
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        .c-num {
+            color: #79c0ff;
+        }
+
+        .c-key {
+            color: #79c0ff;
+        }
+
+        .chat-bubble {
+            background-color: rgba(210, 153, 34, 0.08);
+            border: 1px solid rgba(210, 153, 34, 0.25);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .chat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #d29922;
+            margin-bottom: 4px;
+        }
+
+        .section-divider {
+            border-top: 1px solid #21262d;
+            margin: 12px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-orange"></div>
+        <div class="content-wrapper">
+            <!-- Left -->
+            <div class="text-column">
+                <div class="badge"><i class="fas fa-robot"></i> Extensibility</div>
+                <h1>Custom Agents</h1>
+                <p class="tagline">// Declarative .agent.md or Extension API</p>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-file-code text-base"></i></div>
+                    <div>
+                        <p class="feature-title">Declarative: <code
+                                style="color:#d29922">.github/agents/*.agent.md</code></p>
+                        <p class="feature-desc">Define name, tools list, model, and system prompt in YAML frontmatter +
+                            Markdown body. No extension code needed — VS Code discovers agent files automatically.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-plug text-base"></i></div>
+                    <div>
+                        <p class="feature-title">Programmatic: Extension API</p>
+                        <p class="feature-desc">Use <code
+                                style="color:#d29922">vscode.chat.createChatParticipant(id, handler)</code> in an
+                            extension for full control: custom LLM calls, streaming, tool invocations, and VS Code API
+                            access.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-exchange-alt text-base"></i></div>
+                    <div>
+                        <p class="feature-title">Handoffs &amp; Subagents</p>
+                        <p class="feature-desc">Add <code style="color:#d29922">handoffs:</code> in frontmatter to chain
+                            agents (Plan → Implement → Review). Use <code style="color:#d29922">agents: ['*']</code> to
+                            allow sub-agent delegation.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Right: Code window -->
+            <div class="code-column">
+                <div class="mac-window">
+                    <div class="window-header">
+                        <div class="window-controls">
+                            <div class="control-dot red"></div>
+                            <div class="control-dot yellow"></div>
+                            <div class="control-dot green"></div>
+                        </div>
+                        <div class="tab-bar">
+                            <div class="tab"><i class="fas fa-file-alt text-yellow-400" style="font-size:11px;"></i>
+                                .github/agents/db-expert.agent.md</div>
+                        </div>
+                    </div>
+                    <div class="code-content">
+                        <span class="c-cmt">--- # YAML frontmatter — declarative config</span>
+                        <span class="c-key">name</span>: <span class="c-str">DB Expert</span>
+                        <span class="c-key">description</span>: <span class="c-str">Database design, queries &amp;
+                            migrations</span>
+                        <span class="c-key">tools</span>: [<span class="c-str">codebase</span>, <span
+                            class="c-str">editFiles</span>, <span class="c-str">runCommand</span>, <span
+                            class="c-str">fetch</span>]
+                        <span class="c-key">model</span>: <span class="c-str">claude-sonnet-4-5 (copilot)</span>
+                        <span class="c-key">handoffs</span>:
+                        &nbsp;&nbsp;- <span class="c-key">label</span>: <span class="c-str">Generate Migration</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">agent</span>: <span
+                            class="c-str">migration-expert</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">prompt</span>: <span class="c-str">Generate a Prisma
+                            migration for the schema above</span>
+                        <span class="c-cmt">---</span>
+
+                        <span class="c-cmt">## DB Expert Agent</span>
+
+                        You are a database expert focused on PostgreSQL and Prisma ORM.
+                        When analysing schemas, use <span class="c-fn">#tool:codebase</span> first.
+                        Always add indexes for foreign keys and high-cardinality columns.
+                        Migrations must be reversible — always include <span class="c-str">down</span> steps.
+
+                        <span class="c-cmt">## Extension API (programmatic)</span>
+                        <span class="c-kw">const</span> agent = <span class="c-obj">vscode</span>.<span
+                            class="c-obj">chat</span>
+                        &nbsp;&nbsp;.<span class="c-fn">createChatParticipant</span>(<span
+                            class="c-str">'myorg.db-agent'</span>,
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">async</span> (req, ctx, stream, token) =&gt; {
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">const</span> resp = <span
+                            class="c-kw">await</span> req.<span class="c-obj">model</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.<span class="c-fn">sendRequest</span>(messages,
+                        {}, token);
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">for await</span> (<span
+                            class="c-kw">const</span> chunk <span class="c-kw">of</span> resp.<span
+                            class="c-obj">text</span>)
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stream.<span
+                            class="c-fn">markdown</span>(chunk);
+                        &nbsp;&nbsp;});
+                        <div class="section-divider"></div>
+                        <div class="chat-bubble">
+                            <div class="chat-label">Chat invocation</div>
+                            Switch to <span style="color:#d29922">DB Expert</span> agent → "Analyse the users table and
+                            suggest indexes"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

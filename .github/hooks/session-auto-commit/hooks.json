@@ -1,0 +1,14 @@
+{
+    "name": "session-auto-commit",
+    "description": "Automatically commit changes at the end of a session.",
+    "version": "1.0.0",
+    "author": "Amit Kumar",
+    "hooks": {
+        "post-session": [
+            {
+                "command": "echo 'Committing changes...'",
+                "description": "Automatically commit changes at the end of a session."
+            }
+        ]
+    }
+}

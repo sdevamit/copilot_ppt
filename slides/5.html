@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mode 1: Ghost Text (Autocomplete)</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            /* GitHub Dark Dim */
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Background Pattern */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V40H40V1H1Z' fill='%2330363d' fill-opacity='0.15'/%3E%3C/svg%3E");
+            z-index: 0;
+        }
+
+        /* Gradient Glows */
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.2;
+        }
+
+        .glow-blue {
+            width: 500px;
+            height: 500px;
+            background-color: #58a6ff;
+            top: -200px;
+            left: -100px;
+        }
+
+        /* Layout */
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            z-index: 10;
+            padding: 40px 60px;
+            gap: 40px;
+            align-items: center;
+        }
+
+        /* Left Column: Text Content */
+        .text-column {
+            flex: 0 0 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 24px;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background-color: rgba(48, 54, 61, 0.4);
+            border-color: rgba(48, 54, 61, 0.8);
+            transform: translateX(10px);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(56, 139, 253, 0.15);
+            color: #58a6ff;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        .keyboard-shortcut {
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #c9d1d9;
+            margin-left: 8px;
+            box-shadow: 0 2px 0 #0d1117;
+        }
+
+        /* Right Column: Code Window */
+        .code-column {
+            flex: 1;
+            height: 580px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mac-window {
+            width: 100%;
+            height: 100%;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .window-header {
+            background-color: #0d1117;
+            padding: 12px 16px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .red {
+            background-color: #ff5f56;
+        }
+
+        .yellow {
+            background-color: #ffbd2e;
+        }
+
+        .green {
+            background-color: #27c93f;
+        }
+
+        .tab-bar {
+            display: flex;
+            margin-left: 16px;
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        .tab {
+            padding: 4px 12px;
+            background-color: #161b22;
+            color: #e6edf3;
+            border-top: 2px solid #58a6ff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .code-content {
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e6edf3;
+            overflow-y: hidden;
+            position: relative;
+        }
+
+        /* Syntax Highlighting */
+        .kwd {
+            color: #ff7b72;
+        }
+
+        .fn {
+            color: #d2a8ff;
+        }
+
+        .str {
+            color: #a5d6ff;
+        }
+
+        .num {
+            color: #79c0ff;
+        }
+
+        .cls {
+            color: #ffa657;
+        }
+
+        .cmt {
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        .op {
+            color: #79c0ff;
+        }
+
+        .type {
+            color: #7ee787;
+        }
+
+        .ghost-text {
+            color: #8b949e;
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        .cursor-block {
+            display: inline-block;
+            width: 8px;
+            height: 1.2em;
+            background-color: #e6edf3;
+            vertical-align: text-bottom;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Background -->
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-blue"></div>
+        <div class="content-wrapper">
+            <!-- Left Column -->
+            <div class="text-column">
+                <div class="mb-8">
+                    <h2 class="text-blue-400 text-sm font-bold tracking-widest uppercase mb-2">Ghost Text: Mode 1</h2>
+                    <h1 class="text-4xl font-bold text-white mb-2">Autocomplete</h1>
+                    <p class="text-gray-400 text-lg">The "Always On" AI partner for rapid coding.</p>
+                </div>
+                <!-- Feature 1: Best Use Cases -->
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Best Use Cases</h3>
+                        <p class="text-gray-400 text-sm">Boilerplate, repetitive patterns, and idiomatic scaffolds.</p>
+                    </div>
+                </div>
+                <!-- Feature 2: Seeding Suggestions -->
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Seeding Suggestions</h3>
+                        <p class="text-gray-400 text-sm">Guide the AI with descriptive function names, types, and
+                            comments.</p>
+                    </div>
+                </div>
+                <!-- Feature 3: Controls -->
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-keyboard"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Controls</h3>
+                        <p class="text-gray-400 text-sm mt-1">
+                            Accept: <span class="keyboard-shortcut">Tab</span><br />
+                            Cycle: <span class="keyboard-shortcut">Alt</span> + <span
+                                class="keyboard-shortcut">]</span><br />
+                            Partial: <span class="keyboard-shortcut">Ctrl</span> + <span
+                                class="keyboard-shortcut">→</span>
+                        </p>
+                    </div>
+                </div>
+                <!-- Feature 4: Guardrails -->
+                <div class="feature-item">
+                    <div class="feature-icon" style="background-color: rgba(248, 81, 73, 0.15); color: #f85149;">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold text-lg">Guardrails</h3>
+                        <p class="text-gray-400 text-sm">Keep functions small. Verify correctness and side effects.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column -->
+            <div class="code-column">
+                <div class="mac-window">
+                    <div class="window-header">
+                        <div class="window-controls">
+                            <div class="control-dot red"></div>
+                            <div class="control-dot yellow"></div>
+                            <div class="control-dot green"></div>
+                        </div>
+                        <div class="tab-bar">
+                            <div class="tab">api_client.go</div>
+                        </div>
+                    </div>
+                    <div class="code-content">
+                        <!-- Line 1 -->
+                        <div><span class="line-num">1</span><span class="kwd">package</span> client</div>
+                        <!-- Line 2 -->
+                        <div><span class="line-num">2</span></div>
+                        <!-- Line 3 -->
+                        <div><span class="line-num">3</span><span class="kwd">import</span> (</div>
+                        <!-- Line 4 -->
+                        <div><span class="line-num">4</span>    <span class="str">"encoding/json"</span></div>
+                        <!-- Line 5 -->
+                        <div><span class="line-num">5</span>    <span class="str">"net/http"</span></div>
+                        <!-- Line 6 -->
+                        <div><span class="line-num">6</span>)</div>
+                        <!-- Line 7 -->
+                        <div><span class="line-num">7</span></div>
+                        <!-- Line 8 -->
+                        <div><span class="line-num">8</span><span class="kwd">type</span> <span class="type">User</span>
+                            <span class="kwd">struct</span> {
+                        </div>
+                        <!-- Line 9 -->
+                        <div><span class="line-num">9</span>    ID       <span class="type">string</span> <span
+                                class="str">`json:"id"`</span></div>
+                        <!-- Line 10 -->
+                        <div><span class="line-num">10</span>    Username <span class="type">string</span> <span
+                                class="str">`json:"username"`</span></div>
+                        <!-- Line 11 -->
+                        <div><span class="line-num">11</span>}</div>
+                        <!-- Line 12 -->
+                        <div><span class="line-num">12</span></div>
+                        <!-- Line 13: The Seed -->
+                        <div><span class="line-num">13</span><span class="cmt">// GetUserByID fetches a user from the
+                                API and unmarshals the response.</span></div>
+                        <!-- Line 14 -->
+                        <div><span class="line-num">14</span><span class="kwd">func</span> <span
+                                class="fn">GetUserByID</span>(id <span class="type">string</span>) (*<span
+                                class="type">User</span>, <span class="type">error</span>) {</div>
+                        <!-- Line 15: Ghost Text Starts -->
+                        <div><span class="line-num">15</span>    <span class="ghost-text">resp, err :=
+                                http.Get("https://api.example.com/users/" + id)</span></div>
+                        <div><span class="line-num">16</span>    <span class="ghost-text">if err != nil {</span></div>
+                        <div><span class="line-num">17</span>        <span class="ghost-text">return nil, err</span>
+                        </div>
+                        <div><span class="line-num">18</span>    <span class="ghost-text">}</span></div>
+                        <div><span class="line-num">19</span>    <span class="ghost-text">defer resp.Body.Close()</span>
+                        </div>
+                        <div><span class="line-num">20</span></div>
+                        <div><span class="line-num">21</span>    <span class="ghost-text">var user User</span></div>
+                        <div><span class="line-num">22</span>    <span class="ghost-text">if err :=
+                                json.NewDecoder(resp.Body).Decode(&amp;user); err != nil {</span></div>
+                        <div><span class="line-num">23</span>        <span class="ghost-text">return nil, err</span>
+                        </div>
+                        <div><span class="line-num">24</span>    <span class="ghost-text">}</span></div>
+                        <div><span class="line-num">25</span></div>
+                        <div><span class="line-num">26</span>    <span class="ghost-text">return &amp;user, nil<span
+                                    class="cursor-block"></span></span></div>
+                        <!-- Line 27 -->
+                        <div><span class="line-num">27</span>}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

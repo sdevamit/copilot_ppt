@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Conclusion &amp; Best Practices</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            /* GitHub Dark Dim */
+            color: #e6edf3;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1117;
+            overflow: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Grid Background Pattern */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V0H0V1H1V30H30V1H1Z' fill='%2330363d' fill-opacity='0.2'/%3E%3C/svg%3E");
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* Glow effects */
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        .glow-green {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(46, 160, 67, 0.08);
+            top: -100px;
+            right: -100px;
+        }
+
+        .glow-blue {
+            width: 300px;
+            height: 300px;
+            background-color: rgba(88, 166, 255, 0.08);
+            bottom: -50px;
+            left: -50px;
+        }
+
+        /* Card Styles */
+        .feature-card {
+            background-color: rgba(22, 27, 34, 0.8);
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .feature-card:hover {
+            border-color: #3fb950;
+            transform: translateX(8px);
+            background-color: rgba(22, 27, 34, 0.95);
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background-color: #1f2428;
+            border: 1px solid #30363d;
+        }
+
+        /* Checklist Styles in Visual Area */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 9px 14px;
+            background-color: rgba(13, 17, 23, 0.8);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .check-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #238636;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Layout Utilities */
+        .content-area {
+            z-index: 10;
+            display: flex;
+            height: 100%;
+            padding: 22px 60px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide-container">
+        <!-- Background -->
+        <div class="grid-bg"></div>
+        <div class="glow-spot glow-green"></div>
+        <div class="glow-spot glow-blue"></div>
+        <!-- Main Content -->
+        <div class="content-area">
+            <!-- Left Column: Content -->
+            <div class="w-7/12 flex flex-col justify-center pr-12">
+                <!-- Header -->
+                <div class="mb-4">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <i class="fas fa-flag-checkered text-2xl text-white"></i>
+                        <span class="text-gray-400 text-base font-medium tracking-wide">/ summary /
+                            best-practices</span>
+                    </div>
+                    <h1 class="text-4xl font-bold text-white mb-1 tracking-tight">Conclusion &amp; Best Practices</h1>
+                    <h2 class="text-xl text-green-400 font-light mono-font">&lt;Commit_Quality_Code /&gt;</h2>
+                </div>
+                <!-- Bullet Points -->
+                <div class="space-y-2">
+                    <!-- Point 1 -->
+                    <div class="feature-card p-3 flex items-start space-x-4">
+                        <div class="icon-box shrink-0 text-blue-400">
+                            <i class="fas fa-mouse-pointer text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-white mb-0.5">Select the Right Mode</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Don't treat everything as a nail. Use <strong>Ghost Text</strong> for speed,
+                                <strong>Inline</strong> for edits, and <strong>Chat</strong> for reasoning.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 2 -->
+                    <div class="feature-card p-3 flex items-start space-x-4">
+                        <div class="icon-box shrink-0 text-yellow-400">
+                            <i class="fas fa-user-shield text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-white mb-0.5">Own the Diff</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                You are the pilot. Always request explanations, verify logic, and review generated diffs
+                                before committing.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 3 -->
+                    <div class="feature-card p-3 flex items-start space-x-4">
+                        <div class="icon-box shrink-0 text-purple-400">
+                            <i class="fas fa-file-invoice text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-white mb-0.5">Context is King</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Keep relevant files open. Explicitly reference `@workspace` or specific files to ground
+                                the AI in reality.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 4 -->
+                    <div class="feature-card p-3 flex items-start space-x-4">
+                        <div class="icon-box shrink-0 text-red-400">
+                            <i class="fas fa-lock text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-white mb-0.5">Security &amp; Privacy</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Never paste secrets or PII. Copilot filters suggestions matching known public code
+                                (duplication detection). Review generated code for vulnerabilities.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Point 5 -->
+                    <div class="feature-card p-3 flex items-start space-x-4">
+                        <div class="icon-box shrink-0 text-orange-400">
+                            <i class="fas fa-building text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-white mb-0.5">Enterprise Controls</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Copilot Enterprise adds organization knowledge bases, repo indexing, and policy-based
+                                content exclusions for compliance.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column: Visual Summary -->
+            <div class="w-5/12 flex flex-col justify-center items-center relative pl-8">
+                <!-- Summary Checklist Visual -->
+                <div
+                    class="bg-gray-900 border border-gray-700 rounded-xl p-5 w-full shadow-2xl relative overflow-hidden">
+                    <!-- Header inside card -->
+                    <div class="flex items-center justify-between mb-4 border-b border-gray-800 pb-3">
+                        <span class="text-white font-semibold text-base">Ship It Checklist</span>
+                        <span class="px-2 py-1 rounded bg-green-900 text-green-300 text-xs font-mono">READY</span>
+                    </div>
+                    <!-- Checklist Items -->
+                    <div class="space-y-2">
+                        <div class="checklist-item">
+                            <div class="check-circle"><i class="fas fa-check text-white text-xs"></i></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-200 font-medium">Prompt Context</p>
+                                <p class="text-xs text-gray-500">Files open &amp; referenced</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="check-circle"><i class="fas fa-check text-white text-xs"></i></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-200 font-medium">Constraints Defined</p>
+                                <p class="text-xs text-gray-500">Style, perf, edge cases</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="check-circle"><i class="fas fa-check text-white text-xs"></i></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-200 font-medium">Verification</p>
+                                <p class="text-xs text-gray-500">Tests run &amp; passed</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="check-circle"><i class="fas fa-check text-white text-xs"></i></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-200 font-medium">Review</p>
+                                <p class="text-xs text-gray-500">Code read &amp; understood</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="check-circle"><i class="fas fa-check text-white text-xs"></i></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-200 font-medium">Security Check</p>
+                                <p class="text-xs text-gray-500">No secrets, no PII, no vulnerabilities</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Bottom decorative element -->
+                    <div class="mt-4 pt-3 border-t border-gray-800 text-center">
+                        <p class="text-xs text-gray-500 font-mono">Augmented Engineering v1.0</p>
+                    </div>
+                    <!-- Decorative faint huge icon -->
+                    <i
+                        class="fas fa-clipboard-check absolute -bottom-10 -right-10 text-9xl text-gray-800 opacity-20 pointer-events-none"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
